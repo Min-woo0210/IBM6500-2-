@@ -1,0 +1,175 @@
+---
+title: "IC Case 31: Summary of Data Analysis"
+subtitle: "Hypotheses H1 and H2"
+author: "Jungmin Woo"
+date: "2026-11-16"
+format:
+  revealjs:
+    theme: serif
+    width: 1600
+    height: 900
+    footer: "IC Case 31 H1-H2 | Jungmin Woo"
+    transition: slide
+    slide-number: true
+    scrollable: true
+    smaller: true
+    embed-resources: true
+    css: styles.css
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# IC Case 31: H1 and H2
+
+## Summary of Data Analysis
+
+This report summarizes two assigned hypotheses from the Employees Federal Credit Union case. The analysis uses the cleaned Case 31 data file, `Case 31 Data_efcu_4.sav`.
+
+::: {.callout-note}
+The report emphasizes the practical meaning of the results first and places the statistical test results in context.
+:::
+
+# Data and analysis plan
+
+## Why these tests are appropriate
+
+| Hypothesis | Variables | Appropriate test | Reason |
+|---|---|---|---|
+| H1 | Q13 awareness group and Q33 service-needs rating | One-way ANOVA | Q13 has three independent groups and Q33 is compared by group mean. |
+| H2 | Q8r and Q30 ratings from the same respondents | Paired-samples *t* test | The two ratings are repeated measures from each respondent. |
+
+The cleaned data contain 128 cases. The analyses use complete observations for the variables required by each hypothesis.
+
+## Reproducible setup
+
+```{r}
+# The following code shows the analysis workflow used for this report.
+library(haven)
+library(dplyr)
+library(tidyr)
+
+case31 <- read_sav("Case 31 Data_efcu_4.sav")
+```
+
+# H1: Regular share-account awareness
+
+## Research question and hypothesis
+
+**H1:** Members’ awareness of the regular share accounts will influence their opinions on how well the current financial services provided by the credit union meet their needs.
+
+Q13 identifies three awareness/use groups:
+
+1. Aware and have used the regular share account
+2. Aware but have not used it
+3. Unaware of the service
+
+Q33 measures agreement that the credit union’s current financial services meet members’ needs. Because H1 compares the mean Q33 score across three independent Q13 groups, a one-way ANOVA is appropriate.
+
+## Descriptive results
+
+| Q13 group | *n* | Mean Q33 | SD |
+|---|---:|---:|---:|
+| Aware and have used | 13 | 3.08 | 0.76 |
+| Aware but have not used | 32 | 3.72 | 0.63 |
+| Unaware of the service | 83 | 3.63 | 0.66 |
+
+Members who were aware of the regular share account but had not used it reported the highest average rating of the credit union’s ability to meet their needs (*M* = 3.72). Members who were aware and had used the account reported the lowest average rating (*M* = 3.08). The unaware group was also relatively positive (*M* = 3.63). The small used-account group should be interpreted cautiously because it contains only 13 respondents.
+
+## One-way ANOVA
+
+```{r}
+h1 <- case31 |>
+  mutate(
+    awareness_group = factor(
+      q13,
+      levels = c(1, 2, 3),
+      labels = c(
+        "Aware and used",
+        "Aware but not used",
+        "Unaware"
+      )
+    )
+  ) |>
+  drop_na(awareness_group, q33)
+
+aggregate(q33 ~ awareness_group, data = h1,
+          FUN = function(x) c(n = length(x), mean = mean(x), sd = sd(x)))
+
+h1_anova <- aov(q33 ~ awareness_group, data = h1)
+summary(h1_anova)
+TukeyHSD(h1_anova)
+```
+
+The omnibus ANOVA was statistically significant, *F*(2, 125) = 4.63, *p* = .011, with η² = .069. Thus, awareness/use status was related to members’ ratings of how well current financial services meet their needs. The effect size is modest: approximately 6.9% of the variation in Q33 is associated with the Q13 group classification.
+
+The descriptive pattern is the most useful finding for the credit union. The “aware but not used” group was most positive, while the “aware and used” group was least positive. This pattern suggests that actual users may have more critical or demanding evaluations than members who know about the service but have not used it. Follow-up comparisons should be reported with caution because the group sizes are unequal.
+
+## H1 conclusion
+
+The evidence supports a relationship between regular share-account awareness/use and perceived ability of current financial services to meet members’ needs. H1 is supported at the .05 level. However, the result should not be interpreted as proof that awareness causes satisfaction; the analysis is observational and identifies group differences rather than causal effects.
+
+# H2: Loan-rate perceptions
+
+## Research question and hypothesis
+
+**H2:** Members will not be different in their opinion on the credit union’s loan rate (Q8r) and the degree to which they agree that the credit union’s loan rate is lower than competitors (Q30).
+
+Q8 was reverse-coded as Q8r so that the direction of the scale follows the instructor’s analysis table. Q8r and Q30 were then compared for the same respondents. A paired-samples *t* test is appropriate because each member contributes both ratings.
+
+## Descriptive results
+
+| Measure | Complete *n* | Mean | SD |
+|---|---:|---:|---:|
+| Q8r: perceived credit-union loan rate | 107 | 3.14 | 1.13 |
+| Q30: agreement that the loan rate is lower than competitors | 107 | 3.06 | 1.18 |
+| Paired difference, Q8r − Q30 | 107 | 0.08 | 1.45 |
+
+The two ratings were almost identical. The average paired difference was only 0.08 points, indicating very little systematic separation between the two measures.
+
+## Paired-samples *t* test
+
+```{r}
+h2 <- case31 |>
+  transmute(
+    q8r = 6 - q8,
+    q30 = q30
+  ) |>
+  drop_na()
+
+t.test(h2$q8r, h2$q30, paired = TRUE)
+```
+
+The paired-samples *t* test was not statistically significant, *t*(106) = 0.60, *p* = .549. The mean difference was 0.08 points. Therefore, the data do not provide evidence that members gave systematically different ratings to Q8r and Q30.
+
+## H2 conclusion
+
+H2 is supported: members’ average responses to the two loan-rate measures were not significantly different. From a practical perspective, the two questions appear to produce a similar overall assessment in this sample. The result does not mean that every individual answered the questions identically; it means that the average paired difference was too small and variable to conclude that a systematic difference exists.
+
+# Overall interpretation
+
+| Hypothesis | Statistical result | Interpretation |
+|---|---|---|
+| H1 | Significant one-way ANOVA, *p* = .011 | Q13 awareness/use groups differed in their Q33 ratings; the used-account group was least positive. |
+| H2 | Non-significant paired *t* test, *p* = .549 | Q8r and Q30 produced similar average loan-rate assessments. |
+
+Together, the findings show why both descriptive statistics and the appropriate inferential test are needed. H1 reveals a meaningful group pattern that can guide follow-up questions about user experience. H2 shows that two related loan-rate measures were closely aligned at the sample level.
+
+# Appendix: submission links
+
+## GitHub Pages
+
+[Open the published GitHub Pages website](https://min-woo0210.github.io/IBM6500-2-/IC-Case31-H1-H2-Summary/)
+
+## GitHub repository
+
+[Open the GitHub repository](https://github.com/Min-woo0210/IBM6500-2-)
+
+## Files used
+
+- `IC-Case31-H1-H2-Summary.qmd`
+- `IC-Case31-H1-H2-Summary.html`
+- `styles.css`
+- `Case 31 Data_efcu_4.sav`
+

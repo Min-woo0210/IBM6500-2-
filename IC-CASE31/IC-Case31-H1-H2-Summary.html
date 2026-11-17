@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Jungmin Woo" />
+  <meta name="dcterms.date" content="2026-11-16" />
+  <title>IC Case 31: Summary of Data Analysis</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">IC Case 31: Summary of Data Analysis</h1>
+<p class="subtitle">Hypotheses H1 and H2</p>
+<p class="author">Jungmin Woo</p>
+<p class="date">2026-11-16</p>
+</header>
+<h1 id="ic-case-31-h1-and-h2">IC Case 31: H1 and H2</h1>
+<h2 id="summary-of-data-analysis">Summary of Data Analysis</h2>
+<p>This report summarizes two assigned hypotheses from the Employees
+Federal Credit Union case. The analysis uses the cleaned Case 31 data
+file, <code>Case 31 Data_efcu_4.sav</code>.</p>
+<div class="callout-note">
+<p>The report emphasizes the practical meaning of the results first and
+places the statistical test results in context.</p>
+</div>
+<h1 id="data-and-analysis-plan">Data and analysis plan</h1>
+<h2 id="why-these-tests-are-appropriate">Why these tests are
+appropriate</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Hypothesis</th>
+<th>Variables</th>
+<th>Appropriate test</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>H1</td>
+<td>Q13 awareness group and Q33 service-needs rating</td>
+<td>One-way ANOVA</td>
+<td>Q13 has three independent groups and Q33 is compared by group
+mean.</td>
+</tr>
+<tr class="even">
+<td>H2</td>
+<td>Q8r and Q30 ratings from the same respondents</td>
+<td>Paired-samples <em>t</em> test</td>
+<td>The two ratings are repeated measures from each respondent.</td>
+</tr>
+</tbody>
+</table>
+<p>The cleaned data contain 128 cases. The analyses use complete
+observations for the variables required by each hypothesis.</p>
+<h2 id="reproducible-setup">Reproducible setup</h2>
+<p>```{r} # The following code shows the analysis workflow used for this
+report. library(haven) library(dplyr) library(tidyr)</p>
+<p>case31 &lt;- read_sav(“Case 31 Data_efcu_4.sav”)</p>
+<pre><code>
+# H1: Regular share-account awareness
+
+## Research question and hypothesis
+
+**H1:** Members’ awareness of the regular share accounts will influence their opinions on how well the current financial services provided by the credit union meet their needs.
+
+Q13 identifies three awareness/use groups:
+
+1. Aware and have used the regular share account
+2. Aware but have not used it
+3. Unaware of the service
+
+Q33 measures agreement that the credit union’s current financial services meet members’ needs. Because H1 compares the mean Q33 score across three independent Q13 groups, a one-way ANOVA is appropriate.
+
+## Descriptive results
+
+| Q13 group | *n* | Mean Q33 | SD |
+|---|---:|---:|---:|
+| Aware and have used | 13 | 3.08 | 0.76 |
+| Aware but have not used | 32 | 3.72 | 0.63 |
+| Unaware of the service | 83 | 3.63 | 0.66 |
+
+Members who were aware of the regular share account but had not used it reported the highest average rating of the credit union’s ability to meet their needs (*M* = 3.72). Members who were aware and had used the account reported the lowest average rating (*M* = 3.08). The unaware group was also relatively positive (*M* = 3.63). The small used-account group should be interpreted cautiously because it contains only 13 respondents.
+
+## One-way ANOVA
+
+```{r}
+h1 &lt;- case31 |&gt;
+  mutate(
+    awareness_group = factor(
+      q13,
+      levels = c(1, 2, 3),
+      labels = c(
+        &quot;Aware and used&quot;,
+        &quot;Aware but not used&quot;,
+        &quot;Unaware&quot;
+      )
+    )
+  ) |&gt;
+  drop_na(awareness_group, q33)
+
+aggregate(q33 ~ awareness_group, data = h1,
+          FUN = function(x) c(n = length(x), mean = mean(x), sd = sd(x)))
+
+h1_anova &lt;- aov(q33 ~ awareness_group, data = h1)
+summary(h1_anova)
+TukeyHSD(h1_anova)</code></pre>
+<p>The omnibus ANOVA was statistically significant, <em>F</em>(2, 125) =
+4.63, <em>p</em> = .011, with η² = .069. Thus, awareness/use status was
+related to members’ ratings of how well current financial services meet
+their needs. The effect size is modest: approximately 6.9% of the
+variation in Q33 is associated with the Q13 group classification.</p>
+<p>The descriptive pattern is the most useful finding for the credit
+union. The “aware but not used” group was most positive, while the
+“aware and used” group was least positive. This pattern suggests that
+actual users may have more critical or demanding evaluations than
+members who know about the service but have not used it. Follow-up
+comparisons should be reported with caution because the group sizes are
+unequal.</p>
+<h2 id="h1-conclusion">H1 conclusion</h2>
+<p>The evidence supports a relationship between regular share-account
+awareness/use and perceived ability of current financial services to
+meet members’ needs. H1 is supported at the .05 level. However, the
+result should not be interpreted as proof that awareness causes
+satisfaction; the analysis is observational and identifies group
+differences rather than causal effects.</p>
+<h1 id="h2-loan-rate-perceptions">H2: Loan-rate perceptions</h1>
+<h2 id="research-question-and-hypothesis">Research question and
+hypothesis</h2>
+<p><strong>H2:</strong> Members will not be different in their opinion
+on the credit union’s loan rate (Q8r) and the degree to which they agree
+that the credit union’s loan rate is lower than competitors (Q30).</p>
+<p>Q8 was reverse-coded as Q8r so that the direction of the scale
+follows the instructor’s analysis table. Q8r and Q30 were then compared
+for the same respondents. A paired-samples <em>t</em> test is
+appropriate because each member contributes both ratings.</p>
+<h2 id="descriptive-results">Descriptive results</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Measure</th>
+<th style="text-align: right;">Complete <em>n</em></th>
+<th style="text-align: right;">Mean</th>
+<th style="text-align: right;">SD</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Q8r: perceived credit-union loan rate</td>
+<td style="text-align: right;">107</td>
+<td style="text-align: right;">3.14</td>
+<td style="text-align: right;">1.13</td>
+</tr>
+<tr class="even">
+<td>Q30: agreement that the loan rate is lower than competitors</td>
+<td style="text-align: right;">107</td>
+<td style="text-align: right;">3.06</td>
+<td style="text-align: right;">1.18</td>
+</tr>
+<tr class="odd">
+<td>Paired difference, Q8r − Q30</td>
+<td style="text-align: right;">107</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">1.45</td>
+</tr>
+</tbody>
+</table>
+<p>The two ratings were almost identical. The average paired difference
+was only 0.08 points, indicating very little systematic separation
+between the two measures.</p>
+<h2 id="paired-samples-t-test">Paired-samples <em>t</em> test</h2>
+<p>```{r} h2 &lt;- case31 |&gt; transmute( q8r = 6 - q8, q30 = q30 )
+|&gt; drop_na()</p>
+<p>t.test(h2<span
+class="math inline"><em>q</em>8<em>r</em>, <em>h</em>2</span>q30, paired
+= TRUE) ```</p>
+<p>The paired-samples <em>t</em> test was not statistically significant,
+<em>t</em>(106) = 0.60, <em>p</em> = .549. The mean difference was 0.08
+points. Therefore, the data do not provide evidence that members gave
+systematically different ratings to Q8r and Q30.</p>
+<h2 id="h2-conclusion">H2 conclusion</h2>
+<p>H2 is supported: members’ average responses to the two loan-rate
+measures were not significantly different. From a practical perspective,
+the two questions appear to produce a similar overall assessment in this
+sample. The result does not mean that every individual answered the
+questions identically; it means that the average paired difference was
+too small and variable to conclude that a systematic difference
+exists.</p>
+<h1 id="overall-interpretation">Overall interpretation</h1>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Hypothesis</th>
+<th>Statistical result</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>H1</td>
+<td>Significant one-way ANOVA, <em>p</em> = .011</td>
+<td>Q13 awareness/use groups differed in their Q33 ratings; the
+used-account group was least positive.</td>
+</tr>
+<tr class="even">
+<td>H2</td>
+<td>Non-significant paired <em>t</em> test, <em>p</em> = .549</td>
+<td>Q8r and Q30 produced similar average loan-rate assessments.</td>
+</tr>
+</tbody>
+</table>
+<p>Together, the findings show why both descriptive statistics and the
+appropriate inferential test are needed. H1 reveals a meaningful group
+pattern that can guide follow-up questions about user experience. H2
+shows that two related loan-rate measures were closely aligned at the
+sample level.</p>
+<h1 id="appendix-submission-links">Appendix: submission links</h1>
+<h2 id="github-pages">GitHub Pages</h2>
+<p><a
+href="https://min-woo0210.github.io/IBM6500-2-/IC-Case31-H1-H2-Summary/">Open
+the published GitHub Pages website</a></p>
+<h2 id="github-repository">GitHub repository</h2>
+<p><a href="https://github.com/Min-woo0210/IBM6500-2-">Open the GitHub
+repository</a></p>
+<h2 id="files-used">Files used</h2>
+<ul>
+<li><code>IC-Case31-H1-H2-Summary.qmd</code></li>
+<li><code>IC-Case31-H1-H2-Summary.html</code></li>
+<li><code>styles.css</code></li>
+<li><code>Case 31 Data_efcu_4.sav</code></li>
+</ul>
+</body>
+</html>

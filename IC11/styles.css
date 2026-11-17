@@ -1,0 +1,1 @@
+:root{--navy:#2f4858;--coral:#e76f51;--sand:#f7f3ee}.reveal{font-size:28px}.reveal h1,.reveal h2,.reveal h3{color:var(--navy)}.reveal h2{border-bottom:3px solid var(--coral);padding-bottom:.2em}.reveal table{font-size:.72em}.reveal th{background:var(--navy);color:white}.reveal blockquote{border-left:6px solid var(--coral);background:var(--sand);padding:1rem}

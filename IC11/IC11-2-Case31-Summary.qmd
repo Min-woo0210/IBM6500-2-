@@ -1,0 +1,227 @@
+---
+title: "IC11-2: Case 31 Summary of Data Analysis"
+subtitle: "Research Questions R1, R2, R5, and R6"
+author: "Jungmin Woo"
+date: today
+format:
+  revealjs:
+    theme: serif
+    width: 1600
+    height: 900
+    footer: "IC11-2 Case 31 | Jungmin Woo"
+    transition: slide
+    slide-number: true
+    scrollable: true
+    smaller: true
+    embed-resources: true
+    css: styles.css
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Case 31: Summary of Data Analysis
+
+## Research Questions R1, R2, R5, and R6
+
+**Sample:** 128 survey records  
+**Case:** Employees Federal Credit Union
+
+::: {.notes}
+This report summarizes the available Case 31 results and connects each research question to the appropriate analysis and business interpretation.
+:::
+
+# Data and Analysis Note
+
+The cleaned file supplied for this report contains 128 records and includes variables for service awareness, employee evaluations, operational attitudes, and headquarters-area residence.
+
+```{r}
+library(haven)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(knitr)
+
+case31 <- read_sav("Case 31 Data_efcu_4.sav")
+dim(case31)
+```
+
+The cleaned file does **not** contain Q2, Q28, or Q29. Therefore, the R1 and R2 results cannot be calculated from this specific file. Those sections identify the required analysis and document the data limitation rather than inventing results.
+
+# R1: Descriptive Multiple-Response Frequencies - Why Do People Join the Credit Union?
+
+## Research Question
+
+**R1: Why do people join the Credit Union?**
+
+The questionnaire asks respondents to select all applicable reasons for joining. This is a multiple-response categorical question. The correct analysis is a frequency and percentage summary for each reason, followed by a bar chart ranking the reasons.
+
+## Data Limitation
+
+Q2 is not present in `Case 31 Data_efcu_4.sav`. Because the reason-for-joining variables are unavailable, the frequencies and percentages for R1 cannot be calculated from the supplied cleaned file.
+
+```r
+# Example code once the Q2 multiple-response variables are available
+reasons_joined <- case31 |>
+  summarise(
+    convenience = sum(q2_convenience == 1, na.rm = TRUE),
+    higher_savings_rate = sum(q2_savings_rate == 1, na.rm = TRUE)
+  )
+```
+
+## Required Interpretation When Q2 Is Available
+
+The most frequently selected reasons will identify the main value propositions attracting members. The credit union could use these results to emphasize the strongest membership benefits in recruitment and onboarding communications.
+
+# R2: Descriptive Multiple-Response Frequencies - Why Do Members Borrow Elsewhere?
+
+## Research Question
+
+**R2: Why do members use other financial institutions when they need to borrow funds?**
+
+R2 requires Q28 to identify members who borrowed from another source and Q29 to identify the reasons. Because Q29 allows more than one reason, the appropriate method is a multiple-response frequency analysis among respondents who answered yes to Q28.
+
+## Data Limitation
+
+Q28 and Q29 are not present in the supplied cleaned file. Therefore, R2 cannot be summarized numerically from this file.
+
+```r
+# Example code once Q28 and Q29 are available
+outside_borrowing_reasons <- case31 |>
+  filter(q28 == 1) |>
+  summarise(
+    application_not_approved = sum(q29_not_approved == 1, na.rm = TRUE),
+    credit_type_not_offered = sum(q29_type_not_offered == 1, na.rm = TRUE),
+    better_rates_elsewhere = sum(q29_better_rates == 1, na.rm = TRUE),
+    established_credit_line = sum(q29_credit_line == 1, na.rm = TRUE),
+    prefer_local_institution = sum(q29_local_institution == 1, na.rm = TRUE)
+  )
+```
+
+## Required Interpretation When Q29 Is Available
+
+The results would identify whether members leave because of pricing, product availability, approval decisions, existing relationships, or location preferences. Each reason would suggest a different management response.
+
+# R5: Descriptive Frequencies and Percentages - Awareness of Credit Union Services
+
+## Research Question
+
+**R5: How well are members aware of the services offered by the credit union?**
+
+Q13–Q26 measure service awareness. The response categories are:
+
+1. Aware and have used
+2. Aware but have not used
+3. Unaware of the service
+
+```{r}
+awareness_items <- case31 |>
+  select(q13:q26)
+
+awareness_summary <- awareness_items |>
+  summarise(across(everything(), list(
+    used = ~ mean(.x == 1, na.rm = TRUE),
+    aware_not_used = ~ mean(.x == 2, na.rm = TRUE),
+    unaware = ~ mean(.x == 3, na.rm = TRUE)
+  ))) |>
+  pivot_longer(everything(), names_to = "measure", values_to = "percent") |>
+  mutate(percent = round(percent * 100, 1))
+
+awareness_summary
+```
+
+## Key Awareness Results
+
+The service-awareness distribution is summarized in Table @tbl-r5-awareness. The main insight comes from the pattern of responses across services, not from a single test statistic.
+
+| Service | Aware and used | Aware but not used | Unaware |
+|:--|--:|--:|--:|
+| Regular share account | 10.2% | 25.0% | 64.8% |
+| MasterCard credit card | 43.8% | 44.5% | 11.7% |
+| Signature loans | 14.8% | 81.3% | 3.9% |
+| Line of credit loans | 37.5% | 62.5% | 0.0% |
+| Share-collateralized loans | 1.6% | 44.5% | 53.9% |
+| IRA loans | 3.1% | 35.9% | 60.9% |
+
+Table: Service-awareness results for selected Case 31 services. {#tbl-r5-awareness}
+
+Across the services, awareness and usage vary substantially. MasterCard and line-of-credit services have relatively high awareness, while regular share accounts, share-collateralized loans, and IRA loans have large unaware groups. Signature loans have high awareness but a very large aware-but-not-used group, suggesting that awareness alone does not guarantee adoption.
+
+## Management Implication
+
+The credit union should distinguish two communication problems: services with high unawareness require education, while services with high awareness but low usage require a value proposition, product explanation, or conversion strategy.
+
+# R6: Descriptive Means - Attitudes About How the Credit Union Is Operated
+
+## Research Question
+
+**R6: What are the members' attitudes and beliefs about how effectively the credit union is operated?**
+
+Q30–Q34 measure members' attitudes toward loan rates, confidentiality, loan processing, service adequacy, and application simplicity. Higher values indicate stronger agreement with each statement.
+
+```{r}
+operations <- case31 |>
+  summarise(
+    loan_rates_lower = mean(q30, na.rm = TRUE),
+    personnel_confidential = mean(q31, na.rm = TRUE),
+    loan_processing_prompt = mean(q32, na.rm = TRUE),
+    services_meet_needs = mean(q33, na.rm = TRUE),
+    loan_application_simple = mean(q34, na.rm = TRUE)
+  ) |>
+  pivot_longer(everything(), names_to = "item", values_to = "mean")
+
+operations |>
+  mutate(mean = round(mean, 2)) |>
+  kable(col.names = c("Operational statement", "Mean"))
+```
+
+## Key Operations Results
+
+Table @tbl-r6-operations shows the descriptive means used to generate the main insight.
+
+| Operational statement | Mean response on 1–5 scale |
+|:--|--:|
+| Personnel keep financial information confidential | 3.95 |
+| Credit union is prompt in processing loan applications | 3.72 |
+| Financial services meet members' needs | 3.59 |
+| Loan applications are simple and easy | 3.46 |
+| Credit union loan rates are lower than other institutions | 3.06 |
+| **Overall operations mean** | **3.56** |
+
+Table: Members' evaluations of credit union operations. {#tbl-r6-operations}
+
+The strongest evaluation concerns confidentiality, followed by prompt loan processing. The weakest evaluation concerns whether credit union loan rates are lower than those offered by other institutions. The overall operations mean of 3.56 indicates a moderately positive evaluation, but the rate comparison is an area where the credit union may be less competitive or less clearly differentiated.
+
+## Visualization
+
+```{r}
+#| label: fig-r6-operations
+#| fig-cap: "Members' evaluations of credit union operations"
+operations |>
+  ggplot(aes(x = reorder(item, mean), y = mean)) +
+  geom_col(fill = "#2f4858") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 5), breaks = 1:5) +
+  labs(x = NULL, y = "Mean response", title = "Members' evaluations of credit union operations") +
+  theme_minimal()
+```
+
+# Summary of Findings
+
+| Research question | Result summary |
+|:--|:--|
+| R1 | Cannot calculate because Q2 variables are not included in the supplied cleaned file. |
+| R2 | Cannot calculate because Q28–Q29 variables are not included in the supplied cleaned file. |
+| R5 | Awareness varies by service; regular share, share-collateralized, and IRA loans have especially large unaware groups. |
+| R6 | Operations are evaluated moderately positively overall; confidentiality is strongest and loan-rate competitiveness is weakest. |
+
+# Conclusion
+
+The available Case 31 data show that the credit union has communication opportunities and operational strengths. Service awareness is uneven, and some services have a large group of members who do not know they are available. Members view confidentiality and processing promptness relatively favorably, while loan-rate competitiveness receives the weakest evaluation. R1 and R2 should be completed after obtaining a cleaned file that includes Q2, Q28, and Q29.
+
+# Appendix: Links
+
+- [GitHub Pages website](https://min-woo0210.github.io/IBM6500-2-/IC11-2-Case31-Summary/)
+- [GitHub repository](https://github.com/Min-woo0210/IBM6500-2-)
+

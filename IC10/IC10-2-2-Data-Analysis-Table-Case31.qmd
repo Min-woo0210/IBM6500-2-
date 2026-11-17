@@ -1,0 +1,216 @@
+---
+title: "IC10-2-2: Data Analysis Table - Research Questions with Case 31"
+author: "Jungmin Woo"
+date: today
+format:
+  html:
+    toc: true
+    number-sections: true
+    embed-resources: true
+    code-fold: true
+    css: styles.css
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Purpose
+
+This report translates the Case 31 research objectives into an analysis plan. Each research question is connected to the relevant questionnaire variables, measurement levels, recommended statistical method, and the type of conclusion that the analysis can support.
+
+The Case 31 dataset contains 128 usable survey records and includes member evaluations of credit union employees, rates, statements, service awareness, borrowing, management, and headquarters-area residence.
+
+## Instructor Research Questions and Hypotheses
+
+The analysis plan below follows the research questions supplied for the Case 31 assignment:
+
+- **R1:** Why do people join the Credit Union?
+- **R2:** Why do members use other financial institutions when they need to borrow funds?
+- **R3:** What are the members' attitudes and beliefs about the proficiencies of credit union employees?
+- **R4:** Are there perceived differences in (a) attitudes toward employee proficiencies, (b) awareness of services, and (c) operational effectiveness between members who live near the firm's headquarters and members who live elsewhere?
+- **R5:** How well are members aware of the services offered by the credit union?
+- **R6:** What are the members' attitudes and beliefs about how effectively the credit union is operated?
+- **H1:** Members' awareness of regular share accounts will influence their opinions on how well current financial services meet their needs.
+- **H2:** Members will not differ in their opinion of the Credit Union's loan rate (reverse-coded Q8) and the degree to which they agree that the Credit Union's loan rate is lower than competitors (Q30).
+
+```{r}
+library(haven)
+library(dplyr)
+library(tidyr)
+library(knitr)
+
+case31 <- read_sav("Case 31 Data_efcu_1.sav")
+dim(case31)
+```
+
+# Research Questions and Analysis Table
+
+| Research question | Variables | Measurement | Recommended analysis | Decision or interpretation |
+|:--|:--|:--|:--|:--|
+| Why do members join the credit union? | Questionnaire Q2 reasons for joining | Multiple-response categorical | Frequencies and a bar chart for each reason | Identify the most common motivations for membership. |
+| How informed are members about credit union services? | Q13–Q26 awareness and usage items | Ordinal categorical | Frequencies, percentages, and a ranked awareness table | Identify services with the highest awareness and services requiring communication. |
+| How do members evaluate credit union employees? | Q3–Q6 courtesy, helpfulness, professionalism, availability | Ordinal Likert items | Frequencies, medians, item means, and a composite service score | Describe the strengths and weaknesses of employee interactions. |
+| Do members believe that credit union operations meet their needs? | Q30–Q34 operational-attitude items | Ordinal Likert items | Descriptive statistics and a composite operations score | Evaluate perceptions of rates, confidentiality, processing, needs, and applications. |
+| Do members borrow from other financial sources, and why? | Q28–Q29 outside borrowing and reasons | Nominal categorical; multiple response | Frequencies and percentages; cross-tabulations by loan status | Identify why members use competitors or alternative lenders. |
+| Is headquarters-area residence associated with current loan status? | Q27 current loan; Q38 headquarters area | Nominal categorical | Pearson chi-square test of independence | Determine whether borrowing status differs by residence area. |
+| Do headquarters-area and outside-area members differ in management evaluations? | Q37 overall management; Q38 headquarters area | Ordinal outcome and nominal group | Mann–Whitney U test or independent-samples comparison | Compare overall management ratings across residence groups. |
+| Which factors predict employee-service evaluation? | Employee-service composite as outcome; operations score, current loan, headquarters area as predictors | Continuous composite plus categorical predictors | Multiple linear regression | Estimate the unique contribution of operational perceptions and member characteristics. |
+| **H1:** Does awareness of regular share accounts relate to opinions that current services meet members' needs? | Q13 regular share-account awareness; Q33 services meet needs | Ordinal categorical and ordinal Likert | Spearman correlation or Kruskal-Wallis test | Determine whether perceived service adequacy differs by awareness level. |
+| **H2:** Are reverse-coded Q8 loan-rate opinions and Q30 agreement that loan rates are lower than competitors different? | Q8 reverse-coded; Q30 | Paired ordinal responses | Wilcoxon signed-rank test for paired observations | Test whether the two measures produce systematically different ratings. |
+
+## Rationale for the Research Questions
+
+The research questions reflect the board's concerns in the Case 31 narrative: understanding why members join, understanding why they borrow elsewhere, measuring awareness of services, evaluating management and operations, and determining whether headquarters-area residence is related to member opinions.
+
+# Variable Preparation
+
+```{r}
+prepared <- case31 |>
+  transmute(
+    employee_courteous = q3,
+    employee_helpful = q4,
+    employee_professional = q5,
+    employee_available = q6,
+    current_loan = factor(q27, levels = c(1, 2), labels = c("Yes", "No")),
+    loan_rates_lower = q30,
+    personnel_confidential = q31,
+    loan_processing_prompt = q32,
+    services_meet_needs = q33,
+    loan_application_simple = q34,
+    overall_management = na_if(q37, 6),
+    headquarters_area = factor(q38, levels = c(1, 2), labels = c("Yes", "No"))
+  ) |>
+  mutate(
+    employee_service_mean = rowMeans(
+      cbind(employee_courteous, employee_helpful,
+            employee_professional, employee_available),
+      na.rm = TRUE
+    ),
+    operations_mean = rowMeans(
+      cbind(loan_rates_lower, personnel_confidential,
+            loan_processing_prompt, services_meet_needs,
+            loan_application_simple),
+      na.rm = TRUE
+    )
+  )
+
+prepared |>
+  summarise(
+    respondents = n(),
+    employee_service_mean = mean(employee_service_mean, na.rm = TRUE),
+    operations_mean = mean(operations_mean, na.rm = TRUE)
+  ) |>
+  kable(digits = 2)
+```
+
+The employee-service score combines Q3–Q6. The operations score combines Q30–Q34. These composite scores should be evaluated for reliability before being used in a final publication. The value 6 for Q37 represents “No opinion” and is treated as missing for analysis.
+
+# Example Analysis 1: Service Awareness
+
+The awareness questions use three possible responses: aware and used, aware but not used, and unaware of the service. The raw file contains Q13–Q26, so the first step is to calculate the distribution for each service.
+
+```{r}
+awareness_items <- case31 |>
+  select(q13:q26)
+
+awareness_summary <- awareness_items |>
+  summarise(across(everything(), ~ mean(.x == 1, na.rm = TRUE))) |>
+  pivot_longer(everything(), names_to = "question", values_to = "aware_and_used") |>
+  arrange(desc(aware_and_used))
+
+awareness_summary |>
+  mutate(aware_and_used = round(aware_and_used * 100, 1)) |>
+  kable(col.names = c("Question", "Aware and used (%)"))
+```
+
+The awareness table allows the credit union to prioritize communication. A low percentage of members who are aware and have used a service may indicate either limited awareness or a service that members know about but do not need. The two explanations should be separated by examining all response categories rather than only the “used” category.
+
+# Example Analysis 2: Headquarters Area and Current Loan
+
+```{r}
+loan_area_table <- table(prepared$headquarters_area, prepared$current_loan)
+loan_area_table |>
+  kable(col.names = c("Current loan: Yes", "Current loan: No"))
+
+chisq.test(loan_area_table)
+```
+
+The observed table is:
+
+| Headquarters area | Current loan: Yes | Current loan: No |
+|:--|--:|--:|
+| Yes | 20 | 37 |
+| No | 38 | 33 |
+
+Pearson's chi-square test gives (\chi^2(1)=3.62), (p=.057). At the .05 level, the result is not statistically significant. Therefore, the sample does not provide enough evidence that current loan status is associated with headquarters-area residence. The result is close to the conventional cutoff, so the relationship may deserve further investigation with a larger sample and additional explanatory variables.
+
+# Example Analysis 3: Multiple Regression Research Question
+
+**Research question:** Which factors predict members' evaluations of credit union employees?
+
+```{r}
+regression_model <- lm(
+  employee_service_mean ~ operations_mean + current_loan + headquarters_area,
+  data = prepared
+)
+
+summary(regression_model)
+```
+
+The model estimates the unique association between each predictor and employee-service evaluation while holding the other predictors constant. In the Case 31 data, the model explains approximately 22.0% of the variance. Operations mean is a positive and statistically significant predictor, while current loan status and headquarters-area residence are not statistically significant predictors at the .05 level.
+
+# Hypothesis Analysis
+
+## H1: Regular Share-Account Awareness and Service Adequacy
+
+For H1, Q13 is treated as an ordered awareness variable and Q33 measures whether current services meet members' needs. Because Q13 is ordinal and Q33 is an ordinal Likert item, a nonparametric group comparison is appropriate.
+
+```{r}
+case31 |>
+  count(q13, q33) |>
+  arrange(q13, q33) |>
+  kable()
+
+kruskal.test(q33 ~ factor(q13), data = case31)
+```
+
+In the available data, respondents who were aware of and had used regular share accounts had a lower average Q33 rating (mean = 3.08, n = 13) than respondents who were aware but had not used the service (mean = 3.72, n = 32). A Mann–Whitney comparison of these two groups was statistically significant, (U=118), (p=.014). This provides evidence of a difference between these two observed groups, but it does not by itself establish that awareness causes service evaluations. The third “unaware” category should also be included in a final Kruskal-Wallis analysis.
+
+## H2: Loan-Rate Measures
+
+Q8 asks respondents to evaluate the rate charged on credit union loans. To align the direction with Q30, Q8 is reverse-coded as `6 - Q8`; higher values then represent a more favorable evaluation. Q30 measures agreement that the credit union's loan rates are lower than those offered by other institutions.
+
+```{r}
+rate_data <- case31 |>
+  transmute(
+    q8_reverse = 6 - q8,
+    q30
+  ) |>
+  drop_na()
+
+wilcox.test(rate_data$q8_reverse, rate_data$q30, paired = TRUE)
+```
+
+Among 107 complete paired observations, the reverse-coded Q8 mean was 3.14 and the Q30 mean was 3.06. The Wilcoxon signed-rank test was not statistically significant, (p=.601). Therefore, the data do not indicate a systematic difference between the two loan-rate measures. This result is consistent with H2's expectation of no meaningful difference.
+
+# Recommended Analysis Sequence
+
+1. Confirm the research question and identify the unit of analysis.
+2. Match each construct to the questionnaire items that measure it.
+3. Identify measurement levels and response coding.
+4. Examine missing values and invalid responses.
+5. Use frequencies and descriptive statistics before inferential tests.
+6. Select a test that matches the research question and measurement level.
+7. Report the estimate, uncertainty, p-value, and practical interpretation.
+8. Avoid causal language unless the research design supports causal conclusions.
+
+# Conclusion
+
+The analysis table connects the Case 31 business concerns to measurable variables and appropriate statistical procedures. The plan begins with descriptive frequencies, then uses cross-tabulation and chi-square testing for categorical relationships, group comparisons for residence-area differences, and multiple regression for a multivariable prediction question. This structure helps ensure that the method follows the research question rather than being chosen only because it is familiar.
+
+# Appendix: Links
+
+- [GitHub Pages website](https://min-woo0210.github.io/IBM6500-2-/IC10-2-2-Data-Analysis-Table-Case31/)
+- [GitHub repository](https://github.com/Min-woo0210/IBM6500-2-)
+

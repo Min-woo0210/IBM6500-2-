@@ -1,0 +1,192 @@
+---
+title: "IC Case 31: Reliability and Factor Analysis"
+subtitle: "R3 Employee Proficiency and R6 Operational Attitudes"
+author: "Jungmin Woo"
+date: today
+format:
+  revealjs:
+    theme: serif
+    width: 1600
+    height: 900
+    footer: "IC Case 31 Reliability and Factor Analysis | Jungmin Woo"
+    transition: slide
+    slide-number: true
+    scrollable: true
+    smaller: true
+    embed-resources: true
+    css: styles.css
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Purpose
+
+This report evaluates the reliability and factor structure of the multi-item scales in Case 31. The analysis is limited to the scales specified in the assignment:
+
+- **R3:** Attitude toward employee proficiency, measured by Q3–Q6.
+- **R6:** Attitudes about credit union operations, measured by the metric variables Q31–Q34.
+
+The purpose is not to generate the substantive R3 or R6 business insights. The purpose is to decide whether the items form sufficiently coherent scales to justify creating composite variables for later analysis.
+
+# Data and Methods
+
+```{r}
+library(haven)
+library(psych)
+library(dplyr)
+library(knitr)
+
+case31 <- read_sav("Case 31 Data_efcu_4.sav")
+
+r3_items <- case31 |>
+  select(q3, q4, q5, q6)
+
+r6_items <- case31 |>
+  select(q31, q32, q33, q34)
+```
+
+For each scale, I examined the correlation matrix, Cronbach's alpha, item-total statistics, the eigenvalues, and a one-factor exploratory factor solution. Cronbach's alpha evaluates internal consistency. Factor analysis evaluates whether the items appear to reflect a common underlying dimension.
+
+# R3: Employee Proficiency
+
+## Items and Measurement Model
+
+R3 contains four items:
+
+1. Q3: Employees are courteous.
+2. Q4: Employees are helpful.
+3. Q5: Employees are professional.
+4. Q6: Employees are always available.
+
+All items use a 1–5 agreement scale, with higher scores representing more favorable evaluations.
+
+## Correlations and Reliability
+
+```{r}
+round(cor(r3_items, use = "pairwise.complete.obs"), 3)
+
+r3_alpha <- psych::alpha(r3_items)
+r3_alpha$total
+r3_alpha$alpha.drop
+```
+
+The inter-item correlations range from .461 to .720, indicating positive relationships among all four items. Cronbach's alpha is **.866**, which indicates strong internal consistency for this scale. Alpha remains below the full-scale value when any individual item is removed, so deleting an item is not supported by the reliability results.
+
+## Factor Analysis
+
+```{r}
+psych::KMO(r3_items)
+psych::cortest.bartlett(cor(r3_items), n = nrow(r3_items))
+
+r3_fa <- psych::fa(r3_items, nfactors = 1, rotate = "none", fm = "minres")
+r3_fa$loadings
+r3_fa$e.values
+```
+
+The first eigenvalue is approximately **2.879**, accounting for about **72.0%** of the standardized variance. The one-factor loadings are strong: approximately .809, .912, .854, and .815 for Q3 through Q6. This pattern supports the interpretation that the four items measure a common employee-proficiency construct.
+
+## Composite-Scale Decision for R3
+
+The reliability and factor-analysis evidence supports creating an R3 composite scale. I will calculate the mean of Q3–Q6 so that the later analysis has one interpretable employee-proficiency score on the original 1–5 scale.
+
+```{r}
+case31 <- case31 |>
+  mutate(Att_employee_composite = rowMeans(cbind(q3, q4, q5, q6), na.rm = TRUE))
+
+mean(case31$Att_employee_composite, na.rm = TRUE)
+```
+
+The R3 composite mean is approximately **4.21**, but this descriptive value is not the substantive R3 insight for the later Case 31 activity. It is reported here only to document the scale construction.
+
+# R6: Operational Attitudes
+
+## Items and Measurement Model
+
+The assignment specifies four metric R6 variables:
+
+1. Q31: Personnel keep my personal financial information confidential.
+2. Q32: The Credit Union is prompt in processing loan applications.
+3. Q33: Current financial services meet members' needs.
+4. Q34: Loan applications are simple and easy to complete.
+
+All items use a 1–5 agreement scale.
+
+## Correlations and Reliability
+
+```{r}
+round(cor(r6_items, use = "pairwise.complete.obs"), 3)
+
+r6_alpha <- psych::alpha(r6_items)
+r6_alpha$total
+r6_alpha$alpha.drop
+```
+
+The R6 correlations are mixed. Q32 has stronger relationships with the other items, but Q31, Q33, and Q34 have weaker relationships. Cronbach's alpha is **.472**, which is below a commonly used minimum of approximately .70 for an interpretable internal-consistency scale. The item-deletion results do not show a clear improvement that would make the four-item scale reliable.
+
+## Factor Analysis
+
+```{r}
+psych::KMO(r6_items)
+psych::cortest.bartlett(cor(r6_items), n = nrow(r6_items))
+
+r6_fa <- psych::fa(r6_items, nfactors = 1, rotate = "none", fm = "minres")
+r6_fa$loadings
+r6_fa$e.values
+```
+
+The first two eigenvalues are approximately **1.577** and **1.034**. The first factor accounts for only about **39.4%** of standardized variance, and the one-factor loadings are uneven: approximately .512, .844, .483, and .608. This pattern does not provide strong evidence that all four items form one unidimensional scale.
+
+## Composite-Scale Decision for R6
+
+Based on the low alpha, uneven loadings, and two eigenvalues near or above 1, I would **not create a single R6 composite scale without further investigation**. The items may represent different operational dimensions, such as confidentiality, processing speed, service adequacy, and application simplicity. The next step could include reviewing the questionnaire theory, examining a larger set of operational items, or testing a multidimensional structure.
+
+# Construct Validity Across R3 and R6
+
+The instruction also asks for discriminant validity. To examine whether the two intended constructs separate from one another, I ran an exploratory factor analysis using all eight items together. The expected pattern is that Q3–Q6 will cluster on one factor and Q31–Q34 will cluster on another factor.
+
+```{r}
+all_scale_items <- case31 |>
+  select(q3, q4, q5, q6, q31, q32, q33, q34)
+
+round(cor(all_scale_items, use = "pairwise.complete.obs"), 3)
+
+combined_fa <- psych::fa(
+  all_scale_items,
+  nfactors = 2,
+  rotate = "oblimin",
+  fm = "minres"
+)
+
+combined_fa$loadings
+combined_fa$communality
+combined_fa$e.values
+```
+
+The combined item correlation pattern shows strong correlations among Q3–Q6, while the R6 items are less consistently related to one another. A two-factor solution is directionally supported: Q3–Q6 load strongly together, while Q32 and Q34 show stronger relationships with a second operational dimension. Q31 and Q33 do not form a consistently strong cluster with the other R6 items. The first two eigenvalues are approximately 3.457 and 1.266, explaining 43.2% and 15.8% of standardized variance.
+
+This provides reasonable evidence that employee proficiency and operational attitudes are not simply one identical construct, supporting discriminant validity between the two broad domains. However, the weak and uneven R6 pattern limits convergent validity for the proposed four-item R6 scale. The factor results therefore support retaining R3 as a composite while treating R6 as an unresolved or potentially multidimensional construct.
+
+# Comparison of Scale Decisions
+
+| Scale | Items | Cronbach's alpha | First eigenvalue | Main conclusion | Composite decision |
+|:--|:--|--:|--:|:--|:--|
+| R3 employee proficiency | Q3–Q6 | .866 | 2.879 | Strong internal consistency and one-factor evidence | Create mean composite |
+| R6 operational attitudes | Q31–Q34 | .472 | 1.577; second = 1.034 | Weak internal consistency and possible multidimensionality | Do not combine yet |
+
+# Implications for the Next Analysis
+
+For R3, the composite score can be used as a dependent or independent variable in later descriptive, group-comparison, or regression analyses. Reporting one composite is reasonable because the items have strong internal consistency and a coherent factor pattern.
+
+For R6, the individual items should remain separate until the measurement structure is clarified. Combining them now could hide meaningful differences among operational dimensions and create a scale with poor reliability. A later analysis may examine each item separately or develop theoretically justified subscales.
+
+# Conclusion
+
+The reliability and factor analyses lead to different decisions for the two multi-item scales. Q3–Q6 form a reliable and approximately one-dimensional measure of employee proficiency. Q31–Q34 do not currently support a single reliable operational-attitudes composite. These decisions provide a defensible measurement foundation for the next Case 31 analyses.
+
+# Appendix: Links
+
+- [GitHub Pages website](https://min-woo0210.github.io/IBM6500-2-/IC11-Case31-Reliability-Factor-Analysis/)
+- [GitHub repository](https://github.com/Min-woo0210/IBM6500-2-)
+

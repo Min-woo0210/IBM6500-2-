@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Jungmin Woo" />
+  <title>IC Case 31 Reliability and Factor Analysis</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">IC Case 31 Reliability and Factor Analysis</h1>
+<p class="subtitle">R3 Employee Proficiency and R6 Operational
+Attitudes</p>
+<p class="author">Jungmin Woo</p>
+<p class="date">today</p>
+</header>
+<h1 id="purpose">Purpose</h1>
+<p>This report evaluates the reliability and factor structure of the
+multi-item scales in Case 31. The analysis is limited to the scales
+specified in the assignment:</p>
+<ul>
+<li><strong>R3:</strong> Attitude toward employee proficiency, measured
+by Q3–Q6.</li>
+<li><strong>R6:</strong> Attitudes about credit union operations,
+measured by the metric variables Q31–Q34.</li>
+</ul>
+<p>The purpose is not to generate the substantive R3 or R6 business
+insights. The purpose is to decide whether the items form sufficiently
+coherent scales to justify creating composite variables for later
+analysis.</p>
+<h1 id="data-and-methods">Data and Methods</h1>
+<p>```{r} library(haven) library(psych) library(dplyr)
+library(knitr)</p>
+<p>case31 &lt;- read_sav(“Case 31 Data_efcu_4.sav”)</p>
+<p>r3_items &lt;- case31 |&gt; select(q3, q4, q5, q6)</p>
+<p>r6_items &lt;- case31 |&gt; select(q31, q32, q33, q34)</p>
+<pre><code>
+For each scale, I examined the correlation matrix, Cronbach&#39;s alpha, item-total statistics, the eigenvalues, and a one-factor exploratory factor solution. Cronbach&#39;s alpha evaluates internal consistency. Factor analysis evaluates whether the items appear to reflect a common underlying dimension.
+
+# R3: Employee Proficiency
+
+## Items and Measurement Model
+
+R3 contains four items:
+
+1. Q3: Employees are courteous.
+2. Q4: Employees are helpful.
+3. Q5: Employees are professional.
+4. Q6: Employees are always available.
+
+All items use a 1–5 agreement scale, with higher scores representing more favorable evaluations.
+
+## Correlations and Reliability
+
+```{r}
+round(cor(r3_items, use = &quot;pairwise.complete.obs&quot;), 3)
+
+r3_alpha &lt;- psych::alpha(r3_items)
+r3_alpha$total
+r3_alpha$alpha.drop</code></pre>
+<p>The inter-item correlations range from .461 to .720, indicating
+positive relationships among all four items. Cronbach’s alpha is
+<strong>.866</strong>, which indicates strong internal consistency for
+this scale. Alpha remains below the full-scale value when any individual
+item is removed, so deleting an item is not supported by the reliability
+results.</p>
+<h2 id="factor-analysis">Factor Analysis</h2>
+<p>```{r} psych::KMO(r3_items) psych::cortest.bartlett(cor(r3_items), n
+= nrow(r3_items))</p>
+<p>r3_fa &lt;- psych::fa(r3_items, nfactors = 1, rotate = “none”, fm =
+“minres”) r3_fa<span
+class="math inline"><em>l</em><em>o</em><em>a</em><em>d</em><em>i</em><em>n</em><em>g</em><em>s</em><em>r</em>3<sub><em>f</em></sub><em>a</em></span>e.values</p>
+<pre><code>
+The first eigenvalue is approximately **2.879**, accounting for about **72.0%** of the standardized variance. The one-factor loadings are strong: approximately .809, .912, .854, and .815 for Q3 through Q6. This pattern supports the interpretation that the four items measure a common employee-proficiency construct.
+
+## Composite-Scale Decision for R3
+
+The reliability and factor-analysis evidence supports creating an R3 composite scale. I will calculate the mean of Q3–Q6 so that the later analysis has one interpretable employee-proficiency score on the original 1–5 scale.
+
+```{r}
+case31 &lt;- case31 |&gt;
+  mutate(Att_employee_composite = rowMeans(cbind(q3, q4, q5, q6), na.rm = TRUE))
+
+mean(case31$Att_employee_composite, na.rm = TRUE)</code></pre>
+<p>The R3 composite mean is approximately <strong>4.21</strong>, but
+this descriptive value is not the substantive R3 insight for the later
+Case 31 activity. It is reported here only to document the scale
+construction.</p>
+<h1 id="r6-operational-attitudes">R6: Operational Attitudes</h1>
+<h2 id="items-and-measurement-model">Items and Measurement Model</h2>
+<p>The assignment specifies four metric R6 variables:</p>
+<ol type="1">
+<li>Q31: Personnel keep my personal financial information
+confidential.</li>
+<li>Q32: The Credit Union is prompt in processing loan
+applications.</li>
+<li>Q33: Current financial services meet members’ needs.</li>
+<li>Q34: Loan applications are simple and easy to complete.</li>
+</ol>
+<p>All items use a 1–5 agreement scale.</p>
+<h2 id="correlations-and-reliability">Correlations and Reliability</h2>
+<p>```{r} round(cor(r6_items, use = “pairwise.complete.obs”), 3)</p>
+<p>r6_alpha &lt;- psych::alpha(r6_items) r6_alpha<span
+class="math inline"><em>t</em><em>o</em><em>t</em><em>a</em><em>l</em><em>r</em>6<sub><em>a</em></sub><em>l</em><em>p</em><em>h</em><em>a</em></span>alpha.drop</p>
+<pre><code>
+The R6 correlations are mixed. Q32 has stronger relationships with the other items, but Q31, Q33, and Q34 have weaker relationships. Cronbach&#39;s alpha is **.472**, which is below a commonly used minimum of approximately .70 for an interpretable internal-consistency scale. The item-deletion results do not show a clear improvement that would make the four-item scale reliable.
+
+## Factor Analysis
+
+```{r}
+psych::KMO(r6_items)
+psych::cortest.bartlett(cor(r6_items), n = nrow(r6_items))
+
+r6_fa &lt;- psych::fa(r6_items, nfactors = 1, rotate = &quot;none&quot;, fm = &quot;minres&quot;)
+r6_fa$loadings
+r6_fa$e.values</code></pre>
+<p>The first two eigenvalues are approximately <strong>1.577</strong>
+and <strong>1.034</strong>. The first factor accounts for only about
+<strong>39.4%</strong> of standardized variance, and the one-factor
+loadings are uneven: approximately .512, .844, .483, and .608. This
+pattern does not provide strong evidence that all four items form one
+unidimensional scale.</p>
+<h2 id="composite-scale-decision-for-r6">Composite-Scale Decision for
+R6</h2>
+<p>Based on the low alpha, uneven loadings, and two eigenvalues near or
+above 1, I would <strong>not create a single R6 composite scale without
+further investigation</strong>. The items may represent different
+operational dimensions, such as confidentiality, processing speed,
+service adequacy, and application simplicity. The next step could
+include reviewing the questionnaire theory, examining a larger set of
+operational items, or testing a multidimensional structure.</p>
+<h1 id="construct-validity-across-r3-and-r6">Construct Validity Across
+R3 and R6</h1>
+<p>The instruction also asks for discriminant validity. To examine
+whether the two intended constructs separate from one another, I ran an
+exploratory factor analysis using all eight items together. The expected
+pattern is that Q3–Q6 will cluster on one factor and Q31–Q34 will
+cluster on another factor.</p>
+<p>```{r} all_scale_items &lt;- case31 |&gt; select(q3, q4, q5, q6, q31,
+q32, q33, q34)</p>
+<p>round(cor(all_scale_items, use = “pairwise.complete.obs”), 3)</p>
+<p>combined_fa &lt;- psych::fa( all_scale_items, nfactors = 2, rotate =
+“oblimin”, fm = “minres” )</p>
+<p>combined_fa<span
+class="math inline"><em>l</em><em>o</em><em>a</em><em>d</em><em>i</em><em>n</em><em>g</em><em>s</em><em>c</em><em>o</em><em>m</em><em>b</em><em>i</em><em>n</em><em>e</em><em>d</em><sub><em>f</em></sub><em>a</em></span>communality
+combined_fa$e.values ```</p>
+<p>The combined item correlation pattern shows strong correlations among
+Q3–Q6, while the R6 items are less consistently related to one another.
+A two-factor solution is directionally supported: Q3–Q6 load strongly
+together, while Q32 and Q34 show stronger relationships with a second
+operational dimension. Q31 and Q33 do not form a consistently strong
+cluster with the other R6 items. The first two eigenvalues are
+approximately 3.457 and 1.266, explaining 43.2% and 15.8% of
+standardized variance.</p>
+<p>This provides reasonable evidence that employee proficiency and
+operational attitudes are not simply one identical construct, supporting
+discriminant validity between the two broad domains. However, the weak
+and uneven R6 pattern limits convergent validity for the proposed
+four-item R6 scale. The factor results therefore support retaining R3 as
+a composite while treating R6 as an unresolved or potentially
+multidimensional construct.</p>
+<h1 id="comparison-of-scale-decisions">Comparison of Scale
+Decisions</h1>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Scale</th>
+<th style="text-align: left;">Items</th>
+<th style="text-align: right;">Cronbach’s alpha</th>
+<th style="text-align: right;">First eigenvalue</th>
+<th style="text-align: left;">Main conclusion</th>
+<th style="text-align: left;">Composite decision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">R3 employee proficiency</td>
+<td style="text-align: left;">Q3–Q6</td>
+<td style="text-align: right;">.866</td>
+<td style="text-align: right;">2.879</td>
+<td style="text-align: left;">Strong internal consistency and one-factor
+evidence</td>
+<td style="text-align: left;">Create mean composite</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R6 operational attitudes</td>
+<td style="text-align: left;">Q31–Q34</td>
+<td style="text-align: right;">.472</td>
+<td style="text-align: right;">1.577; second = 1.034</td>
+<td style="text-align: left;">Weak internal consistency and possible
+multidimensionality</td>
+<td style="text-align: left;">Do not combine yet</td>
+</tr>
+</tbody>
+</table>
+<h1 id="implications-for-the-next-analysis">Implications for the Next
+Analysis</h1>
+<p>For R3, the composite score can be used as a dependent or independent
+variable in later descriptive, group-comparison, or regression analyses.
+Reporting one composite is reasonable because the items have strong
+internal consistency and a coherent factor pattern.</p>
+<p>For R6, the individual items should remain separate until the
+measurement structure is clarified. Combining them now could hide
+meaningful differences among operational dimensions and create a scale
+with poor reliability. A later analysis may examine each item separately
+or develop theoretically justified subscales.</p>
+<h1 id="conclusion">Conclusion</h1>
+<p>The reliability and factor analyses lead to different decisions for
+the two multi-item scales. Q3–Q6 form a reliable and approximately
+one-dimensional measure of employee proficiency. Q31–Q34 do not
+currently support a single reliable operational-attitudes composite.
+These decisions provide a defensible measurement foundation for the next
+Case 31 analyses.</p>
+<h1 id="appendix-links">Appendix: Links</h1>
+<ul>
+<li><a
+href="https://min-woo0210.github.io/IBM6500-2-/IC11-Case31-Reliability-Factor-Analysis/">GitHub
+Pages website</a></li>
+<li><a href="https://github.com/Min-woo0210/IBM6500-2-">GitHub
+repository</a></li>
+</ul>
+</body>
+</html>

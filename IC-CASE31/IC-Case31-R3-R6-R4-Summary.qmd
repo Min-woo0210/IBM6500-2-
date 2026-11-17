@@ -1,0 +1,185 @@
+---
+title: "IC Case 31: Summary of Data Analysis"
+subtitle: "Research Questions R3, R6, and R4"
+author: "Jungmin Woo"
+date: "2026-11-16"
+format:
+  revealjs:
+    theme: serif
+    width: 1600
+    height: 900
+    footer: "IC Case 31 R3-R6-R4 | Jungmin Woo"
+    transition: slide
+    slide-number: true
+    scrollable: true
+    smaller: true
+    embed-resources: true
+    css: styles.css
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# IC Case 31: R3, R6, and R4
+
+## Summary of Data Analysis
+
+This report summarizes the descriptive results for R3 and R6 and the headquarters-area comparisons requested in R4. The analysis uses the cleaned Case 31 data file, `Case 31 Data_efcu_4.sav`.
+
+::: {.callout-note}
+The earlier reliability and factor-analysis report established that Q3-Q6 can be summarized as an R3 composite. The R6 items Q31-Q34 did not show sufficient internal consistency for a strong composite-scale claim, so their item-level results remain important in this report.
+:::
+
+# Data and analysis plan
+
+```{r}
+library(haven)
+library(dplyr)
+library(tidyr)
+
+case31 <- read_sav("Case 31 Data_efcu_4.sav")
+```
+
+| Research question | Main measures | Analysis |
+|---|---|---|
+| R3 | Q3-Q6: employee courtesy, helpfulness, professionalism, and availability | Descriptive statistics for the reliable R3 composite |
+| R6 | Q31-Q34: confidentiality, prompt loan processing, meeting member needs, and easy loan applications | Item-level descriptive statistics because a composite is not strongly supported |
+| R4 | Headquarters-area residence (Q38) and R3, service awareness, and operational-effectiveness measures | Welch independent-samples *t* tests |
+
+# R3: Employee proficiency
+
+## Research question
+
+**R3:** What are members’ attitudes and beliefs about the proficiencies of credit-union employees?
+
+R3 is measured with four items: Q3, employees are courteous; Q4, employees are helpful; Q5, employees are professional; and Q6, employees are available. The prior factor and reliability analysis supported combining these four items into a composite score.
+
+## Descriptive results
+
+| R3 item | Mean | SD | Interpretation |
+|---|---:|---:|---|
+| Q3: Employees are courteous | 4.35 | 0.66 | Strongly positive |
+| Q4: Employees are helpful | 4.31 | 0.70 | Strongly positive |
+| Q5: Employees are professional | 4.08 | 0.66 | Positive |
+| Q6: Employees are available | 4.08 | 0.79 | Positive, tied for lowest item |
+| R3 composite | 4.21 | 0.59 | Positive overall evaluation |
+
+```{r}
+r3 <- case31 |>
+  mutate(r3_composite = rowMeans(across(q3:q6)))
+
+r3 |>
+  summarise(
+    across(c(q3, q4, q5, q6, r3_composite),
+           list(n = ~sum(!is.na(.)), mean = ~mean(., na.rm = TRUE),
+                sd = ~sd(., na.rm = TRUE)))
+  )
+```
+
+Members evaluated employee proficiency positively across all four dimensions. The R3 composite mean was 4.21 on a five-point scale, indicating that respondents generally agreed that employees were courteous, helpful, professional, and available. Professionalism and availability were tied for the lowest item means at 4.08, although both remained positive. This suggests an opportunity to examine training, consistency, and access channels while preserving the strong courtesy and helpfulness ratings.
+
+## R3 conclusion
+
+Members’ attitudes toward employee proficiency were favorable overall. The results address R3 descriptively: respondents generally viewed employees as competent and service-oriented, with availability needing the most attention relative to the other dimensions.
+
+# R6: Operational effectiveness
+
+## Research question
+
+**R6:** What are members’ attitudes and beliefs about how effectively the credit union is operated?
+
+R6 includes Q31-Q34. The items concern confidentiality, prompt processing of loan applications, whether services meet members’ needs, and whether loan applications are simple and easy to complete.
+
+## Item-level descriptive results
+
+| R6 item | Mean | SD | Interpretation |
+|---|---:|---:|---|
+| Q31: Personnel keep financial information confidential | 3.95 | 0.68 | Most positive R6 item |
+| Q32: Prompt in processing loan applications | 3.72 | 0.79 | Moderately positive |
+| Q33: Services meet members’ needs | 3.59 | 0.68 | Moderately positive |
+| Q34: Loan applications are simple and easy | 3.46 | 0.78 | Lowest R6 item |
+
+```{r}
+r6_items <- case31 |>
+  summarise(
+    across(c(q31, q32, q33, q34),
+           list(n = ~sum(!is.na(.)), mean = ~mean(., na.rm = TRUE),
+                sd = ~sd(., na.rm = TRUE)))
+  )
+r6_items
+```
+
+The results suggest a generally favorable but less enthusiastic evaluation than the R3 results. Confidentiality received the strongest rating (*M* ≈ 3.95). Simplicity of the loan application received the weakest rating (*M* ≈ 3.46), followed by the belief that services meet members’ needs (*M* ≈ 3.59). These results point to a practical improvement area: simplifying the loan-application process and communicating processing timelines clearly.
+
+Because the previous reliability analysis found weak internal consistency for Q31-Q34, I do not treat one average as a definitive R6 scale score. The items may represent related but distinct operational experiences. Reporting each item preserves that information and avoids overstating the validity of a single composite.
+
+## R6 conclusion
+
+Members viewed the credit union’s operations as moderately positive overall, but the results were not equally strong across operational dimensions. Confidentiality was a relative strength, while application simplicity and processing speed were the clearest opportunities for improvement.
+
+# R4: Headquarters-area differences
+
+## Research question
+
+**R4:** Are there perceived differences in (a) attitude toward employee proficiencies, (b) awareness of services, and (c) operational effectiveness between members who live in the area of the firm’s headquarters and members who live elsewhere?
+
+Q38 identifies the comparison groups: members who live in the headquarters area and members who live elsewhere. Because the two groups are independent, Welch independent-samples *t* tests were used. Welch’s version is appropriate when group sizes and variances may differ.
+
+For service awareness, I created a count of the 14 Q13-Q26 service-awareness items coded as aware. For employee proficiency, I used the R3 composite. Because R6 did not support a strong composite, the operational-effectiveness comparison uses the mean of Q31-Q34 as an exploratory summary and is interpreted cautiously.
+
+## Group comparison results
+
+| Outcome | Headquarters area (*n*=57) | Elsewhere (*n*=71) | Welch *t* | *p* |
+|---|---:|---:|---:|---:|
+| R3 employee-proficiency composite | 4.28 | 4.14 | 1.30 | .195 |
+| Number of services recognized | 2.00 | 2.17 | -0.45 | .652 |
+| Exploratory R6 item mean | 3.65 | 3.70 | -0.57 | .568 |
+
+```{r}
+service_items <- paste0("q", 13:26)
+
+r4 <- case31 |>
+  mutate(
+    r3_composite = rowMeans(across(q3:q6)),
+    services_recognized = rowSums(across(all_of(service_items), ~ .x == 1)),
+    r6_item_mean = rowMeans(across(q31:q34)),
+    location = factor(q38, levels = c(1, 2),
+                      labels = c("Headquarters area", "Elsewhere"))
+  ) |>
+  drop_na(location)
+
+t.test(r3_composite ~ location, data = r4)
+t.test(services_recognized ~ location, data = r4)
+t.test(r6_item_mean ~ location, data = r4)
+```
+
+None of the three comparisons was statistically significant at the .05 level. Members in the headquarters area gave a somewhat higher employee-proficiency rating (*M* = 4.28) than members elsewhere (*M* = 4.14), but the difference was not statistically reliable (*p* = .195). Members elsewhere recognized slightly more services on average (2.17 versus 2.00), but this difference was also not significant (*p* = .652). The exploratory R6 comparison was nearly identical across groups (*M* = 3.65 versus 3.70, *p* = .568).
+
+## R4 conclusion
+
+The data do not show meaningful headquarters-area differences in employee proficiency, service awareness, or the exploratory operational-effectiveness summary. The credit union can therefore begin with broadly consistent member communication and service-improvement strategies rather than assuming that location alone explains members’ perceptions. More detailed analysis could examine specific service items or other demographic characteristics.
+
+# Overall interpretation
+
+R3 shows a clear strength: members viewed employees positively. R6 shows a moderately positive but uneven assessment of operations, especially weaker perceptions of loan-application simplicity and processing speed. R4 suggests that these perceptions are broadly similar for members living near headquarters and members living elsewhere.
+
+The practical priority is therefore not a location-specific intervention. Instead, the credit union should preserve employee-service strengths while improving the operational steps that members experience as slow or difficult.
+
+# Appendix: submission links
+
+## GitHub Pages
+
+[Open the published GitHub Pages website](https://min-woo0210.github.io/IBM6500-2-/IC-Case31-R3-R6-R4-Summary/)
+
+## GitHub repository
+
+[Open the GitHub repository](https://github.com/Min-woo0210/IBM6500-2-)
+
+## Files included
+
+- `IC-Case31-R3-R6-R4-Summary.qmd`
+- `IC-Case31-R3-R6-R4-Summary.html`
+- `styles.css`
+- `Case 31 Data_efcu_4.sav`
+

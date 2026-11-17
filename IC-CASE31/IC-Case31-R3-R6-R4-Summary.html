@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Jungmin Woo" />
+  <meta name="dcterms.date" content="2026-11-16" />
+  <title>IC Case 31: Summary of Data Analysis</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">IC Case 31: Summary of Data Analysis</h1>
+<p class="subtitle">Research Questions R3, R6, and R4</p>
+<p class="author">Jungmin Woo</p>
+<p class="date">2026-11-16</p>
+</header>
+<h1 id="ic-case-31-r3-r6-and-r4">IC Case 31: R3, R6, and R4</h1>
+<h2 id="summary-of-data-analysis">Summary of Data Analysis</h2>
+<p>This report summarizes the descriptive results for R3 and R6 and the
+headquarters-area comparisons requested in R4. The analysis uses the
+cleaned Case 31 data file, <code>Case 31 Data_efcu_4.sav</code>.</p>
+<div class="callout-note">
+<p>The earlier reliability and factor-analysis report established that
+Q3-Q6 can be summarized as an R3 composite. The R6 items Q31-Q34 did not
+show sufficient internal consistency for a strong composite-scale claim,
+so their item-level results remain important in this report.</p>
+</div>
+<h1 id="data-and-analysis-plan">Data and analysis plan</h1>
+<p>```{r} library(haven) library(dplyr) library(tidyr)</p>
+<p>case31 &lt;- read_sav(“Case 31 Data_efcu_4.sav”)</p>
+<pre><code>
+| Research question | Main measures | Analysis |
+|---|---|---|
+| R3 | Q3-Q6: employee courtesy, helpfulness, professionalism, and availability | Descriptive statistics for the reliable R3 composite |
+| R6 | Q31-Q34: confidentiality, prompt loan processing, meeting member needs, and easy loan applications | Item-level descriptive statistics because a composite is not strongly supported |
+| R4 | Headquarters-area residence (Q38) and R3, service awareness, and operational-effectiveness measures | Welch independent-samples *t* tests |
+
+# R3: Employee proficiency
+
+## Research question
+
+**R3:** What are members’ attitudes and beliefs about the proficiencies of credit-union employees?
+
+R3 is measured with four items: Q3, employees are courteous; Q4, employees are helpful; Q5, employees are professional; and Q6, employees are available. The prior factor and reliability analysis supported combining these four items into a composite score.
+
+## Descriptive results
+
+| R3 item | Mean | SD | Interpretation |
+|---|---:|---:|---|
+| Q3: Employees are courteous | 4.35 | 0.66 | Strongly positive |
+| Q4: Employees are helpful | 4.31 | 0.70 | Strongly positive |
+| Q5: Employees are professional | 4.08 | 0.66 | Positive |
+| Q6: Employees are available | 4.08 | 0.79 | Positive, tied for lowest item |
+| R3 composite | 4.21 | 0.59 | Positive overall evaluation |
+
+```{r}
+r3 &lt;- case31 |&gt;
+  mutate(r3_composite = rowMeans(across(q3:q6)))
+
+r3 |&gt;
+  summarise(
+    across(c(q3, q4, q5, q6, r3_composite),
+           list(n = ~sum(!is.na(.)), mean = ~mean(., na.rm = TRUE),
+                sd = ~sd(., na.rm = TRUE)))
+  )</code></pre>
+<p>Members evaluated employee proficiency positively across all four
+dimensions. The R3 composite mean was 4.21 on a five-point scale,
+indicating that respondents generally agreed that employees were
+courteous, helpful, professional, and available. Professionalism and
+availability were tied for the lowest item means at 4.08, although both
+remained positive. This suggests an opportunity to examine training,
+consistency, and access channels while preserving the strong courtesy
+and helpfulness ratings.</p>
+<h2 id="r3-conclusion">R3 conclusion</h2>
+<p>Members’ attitudes toward employee proficiency were favorable
+overall. The results address R3 descriptively: respondents generally
+viewed employees as competent and service-oriented, with availability
+needing the most attention relative to the other dimensions.</p>
+<h1 id="r6-operational-effectiveness">R6: Operational effectiveness</h1>
+<h2 id="research-question">Research question</h2>
+<p><strong>R6:</strong> What are members’ attitudes and beliefs about
+how effectively the credit union is operated?</p>
+<p>R6 includes Q31-Q34. The items concern confidentiality, prompt
+processing of loan applications, whether services meet members’ needs,
+and whether loan applications are simple and easy to complete.</p>
+<h2 id="item-level-descriptive-results">Item-level descriptive
+results</h2>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 28%" />
+<col style="width: 28%" />
+<col style="width: 21%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>R6 item</th>
+<th style="text-align: right;">Mean</th>
+<th style="text-align: right;">SD</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Q31: Personnel keep financial information confidential</td>
+<td style="text-align: right;">3.95</td>
+<td style="text-align: right;">0.68</td>
+<td>Most positive R6 item</td>
+</tr>
+<tr class="even">
+<td>Q32: Prompt in processing loan applications</td>
+<td style="text-align: right;">3.72</td>
+<td style="text-align: right;">0.79</td>
+<td>Moderately positive</td>
+</tr>
+<tr class="odd">
+<td>Q33: Services meet members’ needs</td>
+<td style="text-align: right;">3.59</td>
+<td style="text-align: right;">0.68</td>
+<td>Moderately positive</td>
+</tr>
+<tr class="even">
+<td>Q34: Loan applications are simple and easy</td>
+<td style="text-align: right;">3.46</td>
+<td style="text-align: right;">0.78</td>
+<td>Lowest R6 item</td>
+</tr>
+</tbody>
+</table>
+<p><code>{r} r6_items &lt;- case31 |&gt;   summarise(     across(c(q31, q32, q33, q34),            list(n = ~sum(!is.na(.)), mean = ~mean(., na.rm = TRUE),                 sd = ~sd(., na.rm = TRUE)))   ) r6_items</code></p>
+<p>The results suggest a generally favorable but less enthusiastic
+evaluation than the R3 results. Confidentiality received the strongest
+rating (<em>M</em> ≈ 3.95). Simplicity of the loan application received
+the weakest rating (<em>M</em> ≈ 3.46), followed by the belief that
+services meet members’ needs (<em>M</em> ≈ 3.59). These results point to
+a practical improvement area: simplifying the loan-application process
+and communicating processing timelines clearly.</p>
+<p>Because the previous reliability analysis found weak internal
+consistency for Q31-Q34, I do not treat one average as a definitive R6
+scale score. The items may represent related but distinct operational
+experiences. Reporting each item preserves that information and avoids
+overstating the validity of a single composite.</p>
+<h2 id="r6-conclusion">R6 conclusion</h2>
+<p>Members viewed the credit union’s operations as moderately positive
+overall, but the results were not equally strong across operational
+dimensions. Confidentiality was a relative strength, while application
+simplicity and processing speed were the clearest opportunities for
+improvement.</p>
+<h1 id="r4-headquarters-area-differences">R4: Headquarters-area
+differences</h1>
+<h2 id="research-question-1">Research question</h2>
+<p><strong>R4:</strong> Are there perceived differences in (a) attitude
+toward employee proficiencies, (b) awareness of services, and (c)
+operational effectiveness between members who live in the area of the
+firm’s headquarters and members who live elsewhere?</p>
+<p>Q38 identifies the comparison groups: members who live in the
+headquarters area and members who live elsewhere. Because the two groups
+are independent, Welch independent-samples <em>t</em> tests were used.
+Welch’s version is appropriate when group sizes and variances may
+differ.</p>
+<p>For service awareness, I created a count of the 14 Q13-Q26
+service-awareness items coded as aware. For employee proficiency, I used
+the R3 composite. Because R6 did not support a strong composite, the
+operational-effectiveness comparison uses the mean of Q31-Q34 as an
+exploratory summary and is interpreted cautiously.</p>
+<h2 id="group-comparison-results">Group comparison results</h2>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 21%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Outcome</th>
+<th style="text-align: right;">Headquarters area (<em>n</em>=57)</th>
+<th style="text-align: right;">Elsewhere (<em>n</em>=71)</th>
+<th style="text-align: right;">Welch <em>t</em></th>
+<th style="text-align: right;"><em>p</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>R3 employee-proficiency composite</td>
+<td style="text-align: right;">4.28</td>
+<td style="text-align: right;">4.14</td>
+<td style="text-align: right;">1.30</td>
+<td style="text-align: right;">.195</td>
+</tr>
+<tr class="even">
+<td>Number of services recognized</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">2.17</td>
+<td style="text-align: right;">-0.45</td>
+<td style="text-align: right;">.652</td>
+</tr>
+<tr class="odd">
+<td>Exploratory R6 item mean</td>
+<td style="text-align: right;">3.65</td>
+<td style="text-align: right;">3.70</td>
+<td style="text-align: right;">-0.57</td>
+<td style="text-align: right;">.568</td>
+</tr>
+</tbody>
+</table>
+<p>```{r} service_items &lt;- paste0(“q”, 13:26)</p>
+<p>r4 &lt;- case31 |&gt; mutate( r3_composite = rowMeans(across(q3:q6)),
+services_recognized = rowSums(across(all_of(service_items), ~ .x == 1)),
+r6_item_mean = rowMeans(across(q31:q34)), location = factor(q38, levels
+= c(1, 2), labels = c(“Headquarters area”, “Elsewhere”)) ) |&gt;
+drop_na(location)</p>
+<p>t.test(r3_composite ~ location, data = r4) t.test(services_recognized
+~ location, data = r4) t.test(r6_item_mean ~ location, data = r4)
+```</p>
+<p>None of the three comparisons was statistically significant at the
+.05 level. Members in the headquarters area gave a somewhat higher
+employee-proficiency rating (<em>M</em> = 4.28) than members elsewhere
+(<em>M</em> = 4.14), but the difference was not statistically reliable
+(<em>p</em> = .195). Members elsewhere recognized slightly more services
+on average (2.17 versus 2.00), but this difference was also not
+significant (<em>p</em> = .652). The exploratory R6 comparison was
+nearly identical across groups (<em>M</em> = 3.65 versus 3.70,
+<em>p</em> = .568).</p>
+<h2 id="r4-conclusion">R4 conclusion</h2>
+<p>The data do not show meaningful headquarters-area differences in
+employee proficiency, service awareness, or the exploratory
+operational-effectiveness summary. The credit union can therefore begin
+with broadly consistent member communication and service-improvement
+strategies rather than assuming that location alone explains members’
+perceptions. More detailed analysis could examine specific service items
+or other demographic characteristics.</p>
+<h1 id="overall-interpretation">Overall interpretation</h1>
+<p>R3 shows a clear strength: members viewed employees positively. R6
+shows a moderately positive but uneven assessment of operations,
+especially weaker perceptions of loan-application simplicity and
+processing speed. R4 suggests that these perceptions are broadly similar
+for members living near headquarters and members living elsewhere.</p>
+<p>The practical priority is therefore not a location-specific
+intervention. Instead, the credit union should preserve employee-service
+strengths while improving the operational steps that members experience
+as slow or difficult.</p>
+<h1 id="appendix-submission-links">Appendix: submission links</h1>
+<h2 id="github-pages">GitHub Pages</h2>
+<p><a
+href="https://min-woo0210.github.io/IBM6500-2-/IC-Case31-R3-R6-R4-Summary/">Open
+the published GitHub Pages website</a></p>
+<h2 id="github-repository">GitHub repository</h2>
+<p><a href="https://github.com/Min-woo0210/IBM6500-2-">Open the GitHub
+repository</a></p>
+<h2 id="files-included">Files included</h2>
+<ul>
+<li><code>IC-Case31-R3-R6-R4-Summary.qmd</code></li>
+<li><code>IC-Case31-R3-R6-R4-Summary.html</code></li>
+<li><code>styles.css</code></li>
+<li><code>Case 31 Data_efcu_4.sav</code></li>
+</ul>
+</body>
+</html>

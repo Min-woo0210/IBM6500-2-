@@ -1,0 +1,197 @@
+---
+title: "Article Reading: Mediator and Moderator Variables"
+subtitle: "A Study Note on Baron and Kenny (1986)"
+author: "Jungmin Woo"
+date: today
+format:
+  html:
+    toc: true
+    number-sections: true
+    embed-resources: true
+    code-fold: true
+    css: styles.css
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Article Information
+
+**Baron, R. M., & Kenny, D. A. (1986).** The moderator-mediator variable distinction in social psychological research: Conceptual, strategic, and statistical considerations. *Journal of Personality and Social Psychology, 51*(6), 1173–1182. [https://doi.org/10.1037/0022-3514.51.6.1173](https://doi.org/10.1037/0022-3514.51.6.1173)
+
+## Purpose of the Article
+
+Baron and Kenny explain why **moderator** and **mediator** should not be used as interchangeable terms. Both involve a third variable, but the third variable performs a different conceptual and statistical function. A moderator identifies when, for whom, or under what conditions a relationship is stronger or weaker. A mediator explains the process or mechanism through which an independent variable influences an outcome.
+
+The article is important because it connects conceptual theory, research design, and statistical procedures. It encourages researchers to decide whether they are testing a moderation model, a mediation model, or a broader causal system before selecting an analysis.
+
+# Moderator Variables
+
+## Definition
+
+A moderator is a variable that changes the strength or direction of the relationship between a focal independent variable (X) and a dependent variable (Y). In practical language, a moderator answers questions such as:
+
+- When is the effect strongest?
+- For which group does the relationship occur?
+- Under what conditions does the predictor matter more or less?
+
+The moderator is not necessarily caused by (X). It may be a measured characteristic, a situational condition, or an experimental manipulation.
+
+## Statistical Model
+
+Moderation is usually tested with an interaction term:
+
+$$Y = b_0 + b_1X + b_2W + b_3(XW) + e$$
+
+Here, (W) is the moderator and (XW) is the interaction term. A statistically meaningful interaction indicates that the slope of (X) predicting (Y) changes across values or groups of (W).
+
+```r
+# Example moderation model
+moderation_model <- lm(
+  purchase_intention ~ campaign_exposure * fashion_involvement,
+  data = marketing_data
+)
+
+summary(moderation_model)
+```
+
+The interaction coefficient should be followed by a simple-slopes or conditional-effects analysis. A significant interaction alone does not show exactly how the relationship changes.
+
+# Mediator Variables
+
+## Definition
+
+A mediator is a variable that represents the mechanism through which (X) affects (Y). The causal story is:
+
+$$X \rightarrow M \rightarrow Y$$
+
+For example, a marketing campaign may increase purchase intention because it increases perceived brand value. In this example, campaign exposure is (X), perceived brand value is (M), and purchase intention is (Y).
+
+## Statistical Model
+
+The classic mediation framework estimates several relationships:
+
+1. (X) predicts (Y) in the total-effect model.
+2. (X) predicts the proposed mediator (M).
+3. (M) predicts (Y) while controlling for (X).
+4. The direct effect of (X) on (Y) is compared with the total effect after (M) is included.
+
+```r
+# Total effect: c path
+total_model <- lm(purchase_intention ~ campaign_exposure, data = marketing_data)
+
+# a path
+mediator_model <- lm(perceived_brand_value ~ campaign_exposure, data = marketing_data)
+
+# b and c-prime paths
+outcome_model <- lm(
+  purchase_intention ~ campaign_exposure + perceived_brand_value,
+  data = marketing_data
+)
+```
+
+The indirect effect is commonly represented as (ab), where (a) is the effect of (X) on (M), and (b) is the effect of (M) on (Y) controlling for (X). The direct effect is often called (c'), and the total effect is (c).
+
+## Complete and Partial Mediation
+
+- **Complete mediation:** after the mediator is included, the direct relationship between (X) and (Y) is no longer statistically meaningful.
+- **Partial mediation:** the direct relationship becomes smaller but remains statistically meaningful.
+
+These labels should be used carefully. Modern practice usually emphasizes the estimated indirect effect and its confidence interval rather than relying only on whether a series of individual p-values crosses .05.
+
+# Moderator versus Mediator
+
+| Feature | Moderator | Mediator |
+|:--|:--|:--|
+| Main question | When or for whom does (X) affect (Y)? | How or why does (X) affect (Y)? |
+| Role of third variable | Changes the strength or direction of an effect | Transmits or explains an effect |
+| Typical statistical term | Interaction (XW) | Indirect effect (ab) |
+| Main model | (Y = b_0+b_1X+b_2W+b_3XW+e) | (X \rightarrow M \rightarrow Y) |
+| Example | The campaign works better for highly involved consumers | The campaign works through perceived brand value |
+| Key interpretation | Conditional effect | Mechanism or process |
+
+The distinction is conceptual before it is statistical. A variable should not be called a mediator simply because it is correlated with both (X) and (Y), and it should not be called a moderator merely because group differences appear in the data. The proposed role must be supported by theory and research design.
+
+# Strategic and Design Considerations
+
+Baron and Kenny emphasize that moderators can be manipulated or measured, and they can be situational or person-level variables. Mediators are also not limited to verbal self-reports or individual-level constructs. Therefore, the moderator–mediator distinction should not be reduced to simple pairs such as experimental versus measured, situational versus personal, or objective versus subjective.
+
+The research design should establish the temporal and conceptual order of variables. Mediation implies a process, so the proposed cause should occur before the mediator and the mediator should occur before the outcome. Cross-sectional data can be used to estimate mediation models, but they provide weaker evidence for temporal causal claims than longitudinal or experimental designs.
+
+# Classic Mediation Testing Procedure
+
+The article presents a widely used causal-steps approach. In simplified form, the analyst checks whether:
+
+1. (X) is related to (Y).
+2. (X) is related to (M).
+3. (M) is related to (Y) while (X) is controlled.
+4. The (X)-to-(Y) relationship is reduced when (M) is included.
+
+This procedure is useful for understanding the logic of mediation, but it has limitations. A significant total effect is not required for an indirect effect to exist, and separate significance tests do not directly test the product (ab). A contemporary analysis should estimate the indirect effect directly and use bootstrap confidence intervals when possible.
+
+```r
+# A contemporary bootstrap mediation example
+library(lavaan)
+
+mediation_model <- '
+  perceived_brand_value ~ a*campaign_exposure
+  purchase_intention ~ cprime*campaign_exposure + b*perceived_brand_value
+  indirect := a*b
+  total := cprime + (a*b)
+'
+
+fit <- sem(
+  mediation_model,
+  data = marketing_data,
+  se = "bootstrap",
+  bootstrap = 5000
+)
+
+parameterEstimates(fit, boot.ci.type = "perc", standardized = TRUE)
+```
+
+# Broader Causal Systems
+
+The article also discusses situations in which moderators and mediators may appear in the same research system. For example, a campaign may influence perceived value through a mediator, while consumer involvement moderates the strength of the campaign’s effect. In that case, the analyst should specify a conditional process model rather than forcing every third variable into one role.
+
+The most important practical rule is to begin with a diagram and a theoretical explanation. The statistical model should follow the proposed causal structure, not be selected only because it produces a desirable p-value.
+
+# Application to Marketing and Fashion
+
+In fashion marketing, a mediator could explain why a social-media campaign affects purchase intention. For example:
+
+```text
+Campaign exposure → Perceived brand value → Purchase intention
+```
+
+A moderator could identify the consumers for whom that campaign is most effective:
+
+```text
+Campaign exposure × Fashion involvement → Purchase intention
+```
+
+The mediator question is about the mechanism: “Does the campaign work because it changes perceived brand value?” The moderator question is about the condition: “Does the campaign work more strongly among consumers with high fashion involvement?” These questions require different models and different interpretations.
+
+# Important Takeaways
+
+1. Moderator and mediator are not interchangeable labels.
+2. A moderator changes the strength or direction of an (X)-(Y) relationship.
+3. A mediator explains the process through which (X) influences (Y).
+4. Moderation is tested through an interaction term.
+5. Mediation is evaluated through direct, indirect, and total effects.
+6. Theory and research design should determine the role of the third variable.
+7. A significant association alone does not establish mediation or causality.
+8. Modern mediation analysis should report the indirect effect and a confidence interval, preferably using bootstrap methods.
+
+# Appendix: References and Links
+
+## Article
+
+Baron, R. M., & Kenny, D. A. (1986). The moderator–mediator variable distinction in social psychological research: Conceptual, strategic, and statistical considerations. *Journal of Personality and Social Psychology, 51*(6), 1173–1182. [https://doi.org/10.1037/0022-3514.51.6.1173](https://doi.org/10.1037/0022-3514.51.6.1173)
+
+## Project Links
+
+- [GitHub Pages website](https://min-woo0210.github.io/IBM6500-2-/M11-Article-Reading-Mediator-Moderation/)
+- [GitHub repository](https://github.com/Min-woo0210/IBM6500-2-)
+

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Jungmin Woo" />
+  <title>Article Reading: Mediator and Moderator Variables</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Article Reading: Mediator and Moderator Variables</h1>
+<p class="subtitle">A Study Note on Baron and Kenny (1986)</p>
+<p class="author">Jungmin Woo</p>
+<p class="date">today</p>
+</header>
+<h1 id="article-information">Article Information</h1>
+<p><strong>Baron, R. M., &amp; Kenny, D. A. (1986).</strong> The
+moderator-mediator variable distinction in social psychological
+research: Conceptual, strategic, and statistical considerations.
+<em>Journal of Personality and Social Psychology, 51</em>(6), 1173–1182.
+<a
+href="https://doi.org/10.1037/0022-3514.51.6.1173">https://doi.org/10.1037/0022-3514.51.6.1173</a></p>
+<h2 id="purpose-of-the-article">Purpose of the Article</h2>
+<p>Baron and Kenny explain why <strong>moderator</strong> and
+<strong>mediator</strong> should not be used as interchangeable terms.
+Both involve a third variable, but the third variable performs a
+different conceptual and statistical function. A moderator identifies
+when, for whom, or under what conditions a relationship is stronger or
+weaker. A mediator explains the process or mechanism through which an
+independent variable influences an outcome.</p>
+<p>The article is important because it connects conceptual theory,
+research design, and statistical procedures. It encourages researchers
+to decide whether they are testing a moderation model, a mediation
+model, or a broader causal system before selecting an analysis.</p>
+<h1 id="moderator-variables">Moderator Variables</h1>
+<h2 id="definition">Definition</h2>
+<p>A moderator is a variable that changes the strength or direction of
+the relationship between a focal independent variable (X) and a
+dependent variable (Y). In practical language, a moderator answers
+questions such as:</p>
+<ul>
+<li>When is the effect strongest?</li>
+<li>For which group does the relationship occur?</li>
+<li>Under what conditions does the predictor matter more or less?</li>
+</ul>
+<p>The moderator is not necessarily caused by (X). It may be a measured
+characteristic, a situational condition, or an experimental
+manipulation.</p>
+<h2 id="statistical-model">Statistical Model</h2>
+<p>Moderation is usually tested with an interaction term:</p>
+<p><span
+class="math display"><em>Y</em> = <em>b</em><sub>0</sub> + <em>b</em><sub>1</sub><em>X</em> + <em>b</em><sub>2</sub><em>W</em> + <em>b</em><sub>3</sub>(<em>X</em><em>W</em>) + <em>e</em></span></p>
+<p>Here, (W) is the moderator and (XW) is the interaction term. A
+statistically meaningful interaction indicates that the slope of (X)
+predicting (Y) changes across values or groups of (W).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example moderation model</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>moderation_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  purchase_intention <span class="sc">~</span> campaign_exposure <span class="sc">*</span> fashion_involvement,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> marketing_data</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(moderation_model)</span></code></pre></div>
+<p>The interaction coefficient should be followed by a simple-slopes or
+conditional-effects analysis. A significant interaction alone does not
+show exactly how the relationship changes.</p>
+<h1 id="mediator-variables">Mediator Variables</h1>
+<h2 id="definition-1">Definition</h2>
+<p>A mediator is a variable that represents the mechanism through which
+(X) affects (Y). The causal story is:</p>
+<p><span
+class="math display"><em>X</em> → <em>M</em> → <em>Y</em></span></p>
+<p>For example, a marketing campaign may increase purchase intention
+because it increases perceived brand value. In this example, campaign
+exposure is (X), perceived brand value is (M), and purchase intention is
+(Y).</p>
+<h2 id="statistical-model-1">Statistical Model</h2>
+<p>The classic mediation framework estimates several relationships:</p>
+<ol type="1">
+<li><ol start="24" type="A">
+<li>predicts (Y) in the total-effect model.</li>
+</ol></li>
+<li><ol start="24" type="A">
+<li>predicts the proposed mediator (M).</li>
+</ol></li>
+<li><ol start="13" type="A">
+<li>predicts (Y) while controlling for (X).</li>
+</ol></li>
+<li>The direct effect of (X) on (Y) is compared with the total effect
+after (M) is included.</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Total effect: c path</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>total_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(purchase_intention <span class="sc">~</span> campaign_exposure, <span class="at">data =</span> marketing_data)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># a path</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>mediator_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(perceived_brand_value <span class="sc">~</span> campaign_exposure, <span class="at">data =</span> marketing_data)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># b and c-prime paths</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>outcome_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  purchase_intention <span class="sc">~</span> campaign_exposure <span class="sc">+</span> perceived_brand_value,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> marketing_data</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>The indirect effect is commonly represented as (ab), where (a) is the
+effect of (X) on (M), and (b) is the effect of (M) on (Y) controlling
+for (X). The direct effect is often called (c’), and the total effect is
+(c).</p>
+<h2 id="complete-and-partial-mediation">Complete and Partial
+Mediation</h2>
+<ul>
+<li><strong>Complete mediation:</strong> after the mediator is included,
+the direct relationship between (X) and (Y) is no longer statistically
+meaningful.</li>
+<li><strong>Partial mediation:</strong> the direct relationship becomes
+smaller but remains statistically meaningful.</li>
+</ul>
+<p>These labels should be used carefully. Modern practice usually
+emphasizes the estimated indirect effect and its confidence interval
+rather than relying only on whether a series of individual p-values
+crosses .05.</p>
+<h1 id="moderator-versus-mediator">Moderator versus Mediator</h1>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Moderator</th>
+<th style="text-align: left;">Mediator</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Main question</td>
+<td style="text-align: left;">When or for whom does (X) affect (Y)?</td>
+<td style="text-align: left;">How or why does (X) affect (Y)?</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Role of third variable</td>
+<td style="text-align: left;">Changes the strength or direction of an
+effect</td>
+<td style="text-align: left;">Transmits or explains an effect</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Typical statistical term</td>
+<td style="text-align: left;">Interaction (XW)</td>
+<td style="text-align: left;">Indirect effect (ab)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Main model</td>
+<td style="text-align: left;">(Y = b_0+b_1X+b_2W+b_3XW+e)</td>
+<td style="text-align: left;">(X M Y)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Example</td>
+<td style="text-align: left;">The campaign works better for highly
+involved consumers</td>
+<td style="text-align: left;">The campaign works through perceived brand
+value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Key interpretation</td>
+<td style="text-align: left;">Conditional effect</td>
+<td style="text-align: left;">Mechanism or process</td>
+</tr>
+</tbody>
+</table>
+<p>The distinction is conceptual before it is statistical. A variable
+should not be called a mediator simply because it is correlated with
+both (X) and (Y), and it should not be called a moderator merely because
+group differences appear in the data. The proposed role must be
+supported by theory and research design.</p>
+<h1 id="strategic-and-design-considerations">Strategic and Design
+Considerations</h1>
+<p>Baron and Kenny emphasize that moderators can be manipulated or
+measured, and they can be situational or person-level variables.
+Mediators are also not limited to verbal self-reports or
+individual-level constructs. Therefore, the moderator–mediator
+distinction should not be reduced to simple pairs such as experimental
+versus measured, situational versus personal, or objective versus
+subjective.</p>
+<p>The research design should establish the temporal and conceptual
+order of variables. Mediation implies a process, so the proposed cause
+should occur before the mediator and the mediator should occur before
+the outcome. Cross-sectional data can be used to estimate mediation
+models, but they provide weaker evidence for temporal causal claims than
+longitudinal or experimental designs.</p>
+<h1 id="classic-mediation-testing-procedure">Classic Mediation Testing
+Procedure</h1>
+<p>The article presents a widely used causal-steps approach. In
+simplified form, the analyst checks whether:</p>
+<ol type="1">
+<li><ol start="24" type="A">
+<li>is related to (Y).</li>
+</ol></li>
+<li><ol start="24" type="A">
+<li>is related to (M).</li>
+</ol></li>
+<li><ol start="13" type="A">
+<li>is related to (Y) while (X) is controlled.</li>
+</ol></li>
+<li>The (X)-to-(Y) relationship is reduced when (M) is included.</li>
+</ol>
+<p>This procedure is useful for understanding the logic of mediation,
+but it has limitations. A significant total effect is not required for
+an indirect effect to exist, and separate significance tests do not
+directly test the product (ab). A contemporary analysis should estimate
+the indirect effect directly and use bootstrap confidence intervals when
+possible.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A contemporary bootstrap mediation example</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lavaan)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>mediation_model <span class="ot">&lt;-</span> <span class="st">&#39;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="st">  perceived_brand_value ~ a*campaign_exposure</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">  purchase_intention ~ cprime*campaign_exposure + b*perceived_brand_value</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">  indirect := a*b</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">  total := cprime + (a*b)</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">sem</span>(</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  mediation_model,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> marketing_data,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">se =</span> <span class="st">&quot;bootstrap&quot;</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">bootstrap =</span> <span class="dv">5000</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="fu">parameterEstimates</span>(fit, <span class="at">boot.ci.type =</span> <span class="st">&quot;perc&quot;</span>, <span class="at">standardized =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<h1 id="broader-causal-systems">Broader Causal Systems</h1>
+<p>The article also discusses situations in which moderators and
+mediators may appear in the same research system. For example, a
+campaign may influence perceived value through a mediator, while
+consumer involvement moderates the strength of the campaign’s effect. In
+that case, the analyst should specify a conditional process model rather
+than forcing every third variable into one role.</p>
+<p>The most important practical rule is to begin with a diagram and a
+theoretical explanation. The statistical model should follow the
+proposed causal structure, not be selected only because it produces a
+desirable p-value.</p>
+<h1 id="application-to-marketing-and-fashion">Application to Marketing
+and Fashion</h1>
+<p>In fashion marketing, a mediator could explain why a social-media
+campaign affects purchase intention. For example:</p>
+<pre class="text"><code>Campaign exposure → Perceived brand value → Purchase intention</code></pre>
+<p>A moderator could identify the consumers for whom that campaign is
+most effective:</p>
+<pre class="text"><code>Campaign exposure × Fashion involvement → Purchase intention</code></pre>
+<p>The mediator question is about the mechanism: “Does the campaign work
+because it changes perceived brand value?” The moderator question is
+about the condition: “Does the campaign work more strongly among
+consumers with high fashion involvement?” These questions require
+different models and different interpretations.</p>
+<h1 id="important-takeaways">Important Takeaways</h1>
+<ol type="1">
+<li>Moderator and mediator are not interchangeable labels.</li>
+<li>A moderator changes the strength or direction of an (X)-(Y)
+relationship.</li>
+<li>A mediator explains the process through which (X) influences
+(Y).</li>
+<li>Moderation is tested through an interaction term.</li>
+<li>Mediation is evaluated through direct, indirect, and total
+effects.</li>
+<li>Theory and research design should determine the role of the third
+variable.</li>
+<li>A significant association alone does not establish mediation or
+causality.</li>
+<li>Modern mediation analysis should report the indirect effect and a
+confidence interval, preferably using bootstrap methods.</li>
+</ol>
+<h1 id="appendix-references-and-links">Appendix: References and
+Links</h1>
+<h2 id="article">Article</h2>
+<p>Baron, R. M., &amp; Kenny, D. A. (1986). The moderator–mediator
+variable distinction in social psychological research: Conceptual,
+strategic, and statistical considerations. <em>Journal of Personality
+and Social Psychology, 51</em>(6), 1173–1182. <a
+href="https://doi.org/10.1037/0022-3514.51.6.1173">https://doi.org/10.1037/0022-3514.51.6.1173</a></p>
+<h2 id="project-links">Project Links</h2>
+<ul>
+<li><a
+href="https://min-woo0210.github.io/IBM6500-2-/M11-Article-Reading-Mediator-Moderation/">GitHub
+Pages website</a></li>
+<li><a href="https://github.com/Min-woo0210/IBM6500-2-">GitHub
+repository</a></li>
+</ul>
+</body>
+</html>

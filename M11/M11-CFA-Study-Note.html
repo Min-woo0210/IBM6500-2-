@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Jungmin Woo" />
+  <title>Confirmatory Factor Analysis in R: Study Note</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Confirmatory Factor Analysis in R: Study Note</h1>
+<p class="author">Jungmin Woo</p>
+<p class="date">today</p>
+</header>
+<h1 id="purpose-and-data">Purpose and Data</h1>
+<p>This study note summarizes the UCLA seminar <strong>Confirmatory
+Factor Analysis in R with <code>lavaan</code></strong> and documents a
+reproducible analysis of the SAQ-8 questionnaire. The goal is to explain
+the concepts well enough that I can use or review a CFA analysis in a
+future marketing analytics project.</p>
+<p>The seminar uses eight observed SAQ items to measure a proposed
+latent construct called SPSS Anxiety. The data contain 2,571
+observations. The eight indicators are statistics makes me cry, fear of
+looking unintelligent, excitement about standard deviations,
+Pearson-related dreams, difficulty understanding statistics, limited
+computer experience, computers hating the respondent, and difficulty
+with mathematics.</p>
+<p>```{r} library(haven) library(lavaan)</p>
+<p>saq &lt;- read_sav(“SAQ.sav”) saq &lt;- as.data.frame(saq) dim(saq)
+head(saq)</p>
+<pre><code>
+## Correlations and Covariances
+
+```{r}
+round(cor(saq[, 1:8], use = &quot;pairwise.complete.obs&quot;), 2)
+round(cov(saq[, 1:8], use = &quot;pairwise.complete.obs&quot;), 2)</code></pre>
+<p>The correlation matrix describes standardized relationships among
+item pairs. The diagonal is 1 because each item is perfectly correlated
+with itself, and the matrix is symmetric because the correlation between
+Item A and Item B equals the correlation between Item B and Item A.
+Several correlations have moderate magnitude, which supports examining
+whether a smaller number of latent factors can explain the item
+relationships.</p>
+<h1 id="cfa-concepts">CFA Concepts</h1>
+<h2 id="efa-versus-cfa">EFA versus CFA</h2>
+<p>Exploratory factor analysis (EFA) is used when the researcher does
+not want to impose a specific factor structure in advance. The data help
+suggest how many factors may exist and which items may belong to each
+factor.</p>
+<p>Confirmatory factor analysis (CFA) begins with a theory or previously
+proposed measurement structure. The researcher specifies which observed
+indicators measure which latent factors and then evaluates how well the
+proposed model reproduces the observed covariance matrix. CFA is
+therefore appropriate when the goal is to test a measurement hypothesis
+rather than search freely for a structure.</p>
+<h2
+id="observed-indicators-latent-factors-loadings-and-residuals">Observed
+Indicators, Latent Factors, Loadings, and Residuals</h2>
+<ul>
+<li><strong>Observed indicators</strong> are the measured questionnaire
+items, such as <code>q01</code> through <code>q08</code>.</li>
+<li><strong>Latent factors</strong> are unobserved constructs inferred
+from patterns among the indicators.</li>
+<li><strong>Factor loadings</strong> describe how strongly an indicator
+is related to the latent factor.</li>
+<li><strong>Residual variances</strong> describe the part of an
+indicator’s variance not explained by the factor.</li>
+</ul>
+<p>The measurement model for one item can be written as:</p>
+<p><span
+class="math display"><em>y</em><sub><em>i</em></sub> = <em>τ</em><sub><em>i</em></sub> + <em>λ</em><sub><em>i</em></sub><em>η</em> + <em>ϵ</em><sub><em>i</em></sub></span></p>
+<p>Here, <span
+class="math inline"><em>τ</em><sub><em>i</em></sub></span> is the item
+intercept, <span
+class="math inline"><em>λ</em><sub><em>i</em></sub></span> is the factor
+loading, <span class="math inline"><em>η</em></span> is the latent
+factor, and <span
+class="math inline"><em>ϵ</em><sub><em>i</em></sub></span> is the item
+residual.</p>
+<p>The model-implied covariance matrix is:</p>
+<p><span
+class="math display"><em>Σ</em>(<em>θ</em>) = <em>Λ</em><em>Ψ</em><em>Λ</em>′ + <em>Θ</em><sub><em>ϵ</em></sub></span></p>
+<p>It represents the covariance structure implied by the proposed model.
+CFA compares this model-implied structure with the covariance structure
+observed in the data.</p>
+<h1 id="one-factor-cfa">One-Factor CFA</h1>
+<h2 id="basic-lavaan-syntax">Basic <code>lavaan</code> Syntax</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>m1a <span class="ot">&lt;-</span> <span class="st">&#39;f =~ q03 + q04 + q05&#39;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>fit_m1a <span class="ot">&lt;-</span> <span class="fu">cfa</span>(m1a, <span class="at">data =</span> saq)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_m1a, <span class="at">standardized =</span> <span class="cn">TRUE</span>, <span class="at">fit.measures =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>In <code>lavaan</code>, <code>=~</code> means “is measured by.”
+Therefore, <code>f =~ q03 + q04 + q05</code> specifies that the latent
+factor <code>f</code> is measured by the three observed indicators
+<code>q03</code>, <code>q04</code>, and <code>q05</code>.</p>
+<h2
+id="marker-variable-and-variance-standardization-methods">Marker-Variable
+and Variance-Standardization Methods</h2>
+<p>The marker-variable method fixes the first loading to 1. This gives
+the latent factor a measurement scale based on the first indicator:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>m1a <span class="ot">&lt;-</span> <span class="st">&#39;f =~ q03 + q04 + q05&#39;</span></span></code></pre></div>
+<p>The variance-standardization method frees the first loading and fixes
+the latent variance to 1:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>m1b <span class="ot">&lt;-</span> <span class="st">&#39;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="st">  f =~ NA*q03 + q04 + q05</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="st">  f ~~ 1*f</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>fit_m1b <span class="ot">&lt;-</span> <span class="fu">cfa</span>(m1b, <span class="at">data =</span> saq)</span></code></pre></div>
+<p>These are alternative identification choices. When specified
+correctly, they produce equivalent model fit, although the
+unstandardized parameter values use different scales.</p>
+<h2 id="identification-and-degrees-of-freedom">Identification and
+Degrees of Freedom</h2>
+<p>For <span class="math inline"><em>p</em></span> observed indicators,
+the number of unique variances and covariances is:</p>
+<p><span class="math display"><em>p</em>(<em>p</em> + 1)/2</span></p>
+<p>For three indicators, there are <span
+class="math inline">3(4)/2 = 6</span> known values: three variances and
+three unique covariances. A model is:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Model status</th>
+<th style="text-align: left;">Relationship</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Under-identified</td>
+<td style="text-align: left;">Known values &lt; free parameters</td>
+<td style="text-align: left;">Cannot estimate a unique solution; degrees
+of freedom are negative.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Just-identified</td>
+<td style="text-align: left;">Known values = free parameters</td>
+<td style="text-align: left;">Degrees of freedom equal zero; model fit
+cannot be tested.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Over-identified</td>
+<td style="text-align: left;">Known values &gt; free parameters</td>
+<td style="text-align: left;">Positive degrees of freedom allow
+model-fit evaluation.</td>
+</tr>
+</tbody>
+</table>
+<p>The general formula is:</p>
+<p><span class="math display"><em>d</em><em>f</em> = number of known
+values − number of free parameters</span></p>
+<p>Fixing one loading establishes the scale of the factor. Setting
+residual covariances to zero reflects the usual assumption that
+item-specific errors are independent and reduces the number of free
+parameters. For a three-item one-factor model, one fixed loading and
+three fixed residual covariances reduce ten unique model parameters to
+six free parameters, producing <span
+class="math inline">6 − 6 = 0</span> degrees of freedom.</p>
+<h1 id="saq-8-one-factor-model">SAQ-8 One-Factor Model</h1>
+<p>```{r} one_factor_model &lt;- ’ anxiety =~ q01 + q02 + q03 + q04 +
+q05 + q06 + q07 + q08 ’</p>
+<p>one_factor_fit &lt;- cfa(one_factor_model, data = saq, std.lv = TRUE)
+summary(one_factor_fit, fit.measures = TRUE, standardized = TRUE)
+standardizedSolution(one_factor_fit)</p>
+<pre><code>
+The UCLA seminar reports the following key results for the eight-item one-factor model:
+
+| Fit statistic | Result |
+|:--|--:|
+| Observations | 2,571 |
+| Model chi-square | $\chi^2(20)=554.191$, p &lt; .001 |
+| CFI | .871 |
+| TLI | .819 |
+| RMSEA | .102, 90% CI [.095, .109] |
+
+The standardized loadings show that the indicators do not all relate equally strongly to one general factor. In particular, Item 2 has a weak standardized loading of approximately -0.23. The chi-square test is significant, CFI and TLI are below commonly used desirable levels, and RMSEA is approximately .10. Taken together, the one-factor SAQ-8 model does not show good fit and should not automatically be treated as an adequate measurement model.
+
+## Interpreting Fit Statistics
+
+- **Chi-square:** tests the exact-fit hypothesis. A significant result indicates a discrepancy between the observed and model-implied covariance matrices, although the statistic is sensitive to large samples.
+- **CFI:** compares the proposed model with a baseline model. Values closer to 1 indicate better comparative fit.
+- **TLI:** is another incremental fit index that also penalizes model complexity.
+- **RMSEA:** measures approximate error of fit. Smaller values indicate better approximate fit; values around .05 are often considered close fit, while values around .10 indicate poor fit.
+
+Fit indices should be interpreted together with theory, standardized loadings, residuals, sample size, and the purpose of the measurement model. One index should not determine the decision by itself.
+
+# Two-Factor and Second-Order Models
+
+The seminar considers a two-factor structure in which Items 1, 3, 4, 5, and 8 measure SPSS Anxiety, while Items 6 and 7 measure Attribution Bias. A two-factor model may allow the data to represent more than one psychological construct.
+
+```r
+two_factor_model &lt;- &#39;
+  anxiety =~ q01 + q03 + q04 + q05 + q08
+  attribution =~ q06 + q07
+&#39;
+
+correlated_fit &lt;- cfa(two_factor_model, data = saq, std.lv = TRUE)
+summary(correlated_fit, fit.measures = TRUE, standardized = TRUE)</code></pre>
+<p>An uncorrelated model fixes the covariance between the two latent
+factors to zero. A correlated model estimates that covariance. The
+correlated model is appropriate when theory allows the constructs to be
+related but still distinct.</p>
+<p>A second-order CFA treats the first-order factors as indicators of a
+broader higher-order factor:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>second_order_model <span class="ot">&lt;-</span> <span class="st">&#39;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="st">  anxiety =~ q01 + q03 + q04 + q05 + q08</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="st">  attribution =~ q06 + q07</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="st">  overall_anxiety =~ anxiety + attribution</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>second_order_fit <span class="ot">&lt;-</span> <span class="fu">cfa</span>(second_order_model, <span class="at">data =</span> saq, <span class="at">std.lv =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(second_order_fit, <span class="at">fit.measures =</span> <span class="cn">TRUE</span>, <span class="at">standardized =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>The second-order factor represents a common construct that explains
+the relationship between the first-order factors. The UCLA example
+reports <span
+class="math inline"><em>χ</em><sup>2</sup>(13) = 66.768</span>,
+CFI=.986, and TLI=.977 for its identified second-order model. These
+results indicate substantially better fit than the original one-factor
+model, although model choice must still be supported by substantive
+theory and not fit statistics alone.</p>
+<h1 id="practice-questions-and-answers">Practice Questions and
+Answers</h1>
+<h2 id="what-is-the-difference-between-efa-and-cfa">1. What is the
+difference between EFA and CFA?</h2>
+<p>EFA searches for a possible factor structure, whereas CFA tests a
+factor structure specified before the analysis. EFA is useful during
+scale development; CFA is useful for evaluating whether a proposed
+measurement model is consistent with observed data.</p>
+<h2 id="what-are-the-observed-indicators-and-latent-factors-in-saq-8">2.
+What are the observed indicators and latent factors in SAQ-8?</h2>
+<p>The observed indicators are the eight questionnaire items,
+<code>q01</code> through <code>q08</code>. The one-factor model treats
+them as indicators of a latent SPSS Anxiety factor. The two-factor model
+separates the items into SPSS Anxiety and Attribution Bias.</p>
+<h2 id="what-do-factor-loadings-represent">3. What do factor loadings
+represent?</h2>
+<p>A factor loading represents the strength and direction of the
+relationship between an observed indicator and its latent factor. Larger
+absolute standardized loadings indicate that the indicator is more
+strongly related to the factor.</p>
+<h2 id="what-do-residual-variances-represent">4. What do residual
+variances represent?</h2>
+<p>Residual variance is the portion of an item’s variance not explained
+by the latent factor. A large residual suggests that the item contains
+substantial item-specific or measurement-specific variance.</p>
+<h2
+id="how-many-unique-variances-and-covariances-are-available-for-three-indicators">5.
+How many unique variances and covariances are available for three
+indicators?</h2>
+<p>There are six unique values: three variances and three unique
+covariances, calculated as <span
+class="math inline">3(3 + 1)/2 = 6</span>.</p>
+<h2 id="what-is-the-difference-between-fixed-and-free-parameters">6.
+What is the difference between fixed and free parameters?</h2>
+<p>A fixed parameter is assigned a value in advance, such as a loading
+fixed to 1. A free parameter is estimated from the data. Identification
+requires enough fixed restrictions to allow a unique estimate of the
+remaining free parameters.</p>
+<h2 id="why-is-a-negative-df-model-under-identified">7. Why is a
+negative-df model under-identified?</h2>
+<p>Negative degrees of freedom mean that the model has more free
+parameters than known values in the observed covariance matrix. The data
+therefore cannot provide enough independent information for a unique
+solution.</p>
+<h2
+id="why-do-fixing-one-loading-and-setting-residual-covariances-to-zero-help-identify-a-model">8.
+Why do fixing one loading and setting residual covariances to zero help
+identify a model?</h2>
+<p>Fixing one loading establishes the latent factor’s scale. Setting
+residual covariances to zero reduces the number of parameters and
+expresses the assumption that item-specific errors are independent.</p>
+<h2
+id="what-is-the-difference-between-just-identified-and-over-identified-models">9.
+What is the difference between just-identified and over-identified
+models?</h2>
+<p>A just-identified model has zero degrees of freedom and can reproduce
+the observed covariance matrix, but it cannot be evaluated with a
+model-fit test. An over-identified model has positive degrees of
+freedom, so its fit can be tested.</p>
+<h2 id="how-should-chi-square-cfi-tli-and-rmsea-be-interpreted">10. How
+should chi-square, CFI, TLI, and RMSEA be interpreted?</h2>
+<p>Chi-square tests exact fit and is sensitive to sample size. CFI and
+TLI compare the proposed model with a baseline model, with larger values
+generally preferred. RMSEA measures approximate error, with smaller
+values preferred. These statistics should be interpreted together.</p>
+<h2
+id="what-is-the-difference-between-correlated-and-uncorrelated-factors">11.
+What is the difference between correlated and uncorrelated factors?</h2>
+<p>An uncorrelated model fixes the covariance between latent factors to
+zero. A correlated model estimates the covariance and allows the
+constructs to share variance while remaining separate factors.</p>
+<h2 id="what-does-a-second-order-factor-represent">12. What does a
+second-order factor represent?</h2>
+<p>A second-order factor is a broader latent construct that explains the
+relationships among first-order latent factors. It is useful when
+several related dimensions may reflect a common higher-level
+concept.</p>
+<h2 id="which-model-appears-most-appropriate">13. Which model appears
+most appropriate?</h2>
+<p>The original one-factor model has weak overall fit, while the
+two-factor and second-order models provide a more plausible
+representation in the UCLA example. The second-order model is attractive
+when theory supports a broad anxiety construct influencing the two
+first-order dimensions. The final choice should consider theory,
+loadings, residuals, fit, and interpretability.</p>
+<h2
+id="what-additional-information-is-needed-before-a-final-decision">14.
+What additional information is needed before a final decision?</h2>
+<p>I would want the original scale-development theory, item wording and
+scoring direction, reliability evidence, modification indices, residual
+correlations, cross-validation in a new sample, and evidence that the
+factors are valid and interpretable in the target population.</p>
+<h1 id="final-takeaways">Final Takeaways</h1>
+<p>The main lesson from this seminar is that CFA is a theory-driven
+measurement procedure. <code>lavaan</code> makes it possible to specify
+latent-variable models, estimate loadings and residuals, evaluate
+identification, and compare model fit. A good CFA report should connect
+code, model structure, fit statistics, and substantive interpretation
+rather than presenting output without explanation.</p>
+<h1 id="appendix-references-and-links">Appendix: References and
+Links</h1>
+<ul>
+<li><a href="https://stats.oarc.ucla.edu/r/seminars/rcfa/">UCLA
+Confirmatory Factor Analysis in R with <code>lavaan</code></a></li>
+<li><a
+href="https://stats.idre.ucla.edu/wp-content/uploads/2018/05/SAQ.sav">SAQ-8
+data source</a></li>
+<li><a
+href="https://min-woo0210.github.io/IBM6500-2-/M11-CFA-Study-Note/">GitHub
+Pages website</a></li>
+<li><a href="https://github.com/Min-woo0210/IBM6500-2-">GitHub
+repository</a></li>
+</ul>
+</body>
+</html>

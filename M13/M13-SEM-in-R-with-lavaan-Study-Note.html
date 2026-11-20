@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Jungmin Woo" />
+  <meta name="dcterms.date" content="2026-11-20" />
+  <title>Structural Equation Modeling in R: Study Note</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">body { font-family: Georgia, serif; line-height: 1.55; max-width: 1050px; margin: 0 auto; padding: 2rem; color: #222; }
+h1, h2, h3 { color: #17365d; }
+table { border-collapse: collapse; width: 100%; margin: 1rem 0 1.5rem; }
+th, td { border: 1px solid #c9d3df; padding: .45rem .6rem; }
+th { background: #eaf1f8; }
+pre { background: #f5f5f5; border: 1px solid #ddd; padding: 1rem; overflow-x: auto; }
+.callout-note { background: #eef6ff; border-left: 5px solid #2f75b5; padding: 1rem; margin: 1rem 0; }
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Structural Equation Modeling in R: Study Note</h1>
+<p class="author">Jungmin Woo</p>
+<p class="date">2026-11-20</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#introduction" id="toc-introduction">Introduction</a>
+<ul>
+<li><a href="#purpose-of-the-assignment" id="toc-purpose-of-the-assignment">Purpose of the Assignment</a></li>
+<li><a href="#what-is-structural-equation-modeling" id="toc-what-is-structural-equation-modeling">What Is Structural
+Equation Modeling?</a></li>
+<li><a href="#data-and-motivating-example" id="toc-data-and-motivating-example">Data and motivating
+example</a></li>
+</ul></li>
+<li><a href="#data-and-software" id="toc-data-and-software">Data and
+Software</a>
+<ul>
+<li><a href="#required-packages-and-import" id="toc-required-packages-and-import">Required packages and
+import</a></li>
+</ul></li>
+<li><a href="#sem-concepts" id="toc-sem-concepts">SEM Concepts</a>
+<ul>
+<li><a href="#observed-and-latent-variables" id="toc-observed-and-latent-variables">Observed and latent
+variables</a></li>
+<li><a href="#exogenous-and-endogenous-variables" id="toc-exogenous-and-endogenous-variables">Exogenous and endogenous
+variables</a></li>
+<li><a href="#measurement-and-structural-models" id="toc-measurement-and-structural-models">Measurement and structural
+models</a></li>
+<li><a href="#path-diagram-interpretation" id="toc-path-diagram-interpretation">Path-diagram
+interpretation</a></li>
+<li><a href="#matrix-notation" id="toc-matrix-notation">Matrix
+notation</a></li>
+</ul></li>
+<li><a href="#lavaan-syntax" id="toc-lavaan-syntax"><code>lavaan</code>
+Syntax</a></li>
+<li><a href="#regression-and-path-analysis" id="toc-regression-and-path-analysis">Regression and Path Analysis</a>
+<ul>
+<li><a href="#simple-regression-model-1a" id="toc-simple-regression-model-1a">Simple regression: Model 1A</a></li>
+<li><a href="#multivariate-regression" id="toc-multivariate-regression">Multivariate regression</a></li>
+</ul></li>
+<li><a href="#model-fit-statistics" id="toc-model-fit-statistics">Model-Fit Statistics</a>
+<ul>
+<li><a href="#chi-square" id="toc-chi-square">Chi-square</a></li>
+<li><a href="#cfi-and-tli" id="toc-cfi-and-tli">CFI and TLI</a></li>
+<li><a href="#rmsea-and-srmr" id="toc-rmsea-and-srmr">RMSEA and
+SRMR</a></li>
+<li><a href="#saturated-just-identified-and-over-identified-models" id="toc-saturated-just-identified-and-over-identified-models">Saturated,
+just-identified, and over-identified models</a></li>
+</ul></li>
+<li><a href="#modification-indices" id="toc-modification-indices">Modification Indices</a></li>
+<li><a href="#measurement-model" id="toc-measurement-model">Measurement
+Model</a>
+<ul>
+<li><a href="#model-specification" id="toc-model-specification">Model
+specification</a></li>
+<li><a href="#two-endogenous-latent-variables-model-6b" id="toc-two-endogenous-latent-variables-model-6b">Two endogenous latent
+variables: Model 6B</a></li>
+<li><a href="#gamma-and-beta-matrices" id="toc-gamma-and-beta-matrices">Gamma and Beta matrices</a></li>
+</ul></li>
+<li><a href="#practice-questions-and-answers" id="toc-practice-questions-and-answers">Practice Questions and
+Answers</a>
+<ul>
+<li><a href="#what-is-structural-equation-modeling-1" id="toc-what-is-structural-equation-modeling-1">1. What is structural
+equation modeling?</a></li>
+<li><a href="#which-statistical-models-are-special-cases-of-sem" id="toc-which-statistical-models-are-special-cases-of-sem">2. Which
+statistical models are special cases of SEM?</a></li>
+<li><a href="#what-is-the-difference-between-an-observed-and-latent-variable" id="toc-what-is-the-difference-between-an-observed-and-latent-variable">3.
+What is the difference between an observed and latent variable?</a></li>
+<li><a href="#what-is-the-difference-between-exogenous-and-endogenous-variables" id="toc-what-is-the-difference-between-exogenous-and-endogenous-variables">4.
+What is the difference between exogenous and endogenous
+variables?</a></li>
+<li><a href="#what-is-the-difference-between-a-measurement-and-structural-model" id="toc-what-is-the-difference-between-a-measurement-and-structural-model">5.
+What is the difference between a measurement and structural
+model?</a></li>
+<li><a href="#what-does-mean-in-lavaan" id="toc-what-does-mean-in-lavaan">6. What does <code>~</code> mean in
+<code>lavaan</code>?</a></li>
+<li><a href="#what-does-mean" id="toc-what-does-mean">7. What does
+<code>=~</code> mean?</a></li>
+<li><a href="#what-does-mean-1" id="toc-what-does-mean-1">8. What does
+<code>~~</code> mean?</a></li>
+<li><a href="#what-is-the-difference-between-a-regression-path-and-a-factor-loading" id="toc-what-is-the-difference-between-a-regression-path-and-a-factor-loading">9.
+What is the difference between a regression path and a factor
+loading?</a></li>
+<li><a href="#what-is-the-difference-between-s-and-σθ" id="toc-what-is-the-difference-between-s-and-σθ">10. What is the
+difference between S and Σ(θ)?</a></li>
+<li><a href="#why-does-cov-produce-a-sample-covariance-matrix" id="toc-why-does-cov-produce-a-sample-covariance-matrix">11. Why does
+<code>cov()</code> produce a sample covariance matrix?</a></li>
+<li><a href="#what-is-the-difference-between-multiple-and-multivariate-regression" id="toc-what-is-the-difference-between-multiple-and-multivariate-regression">12.
+What is the difference between multiple and multivariate
+regression?</a></li>
+<li><a href="#why-are-some-models-saturated" id="toc-why-are-some-models-saturated">13. Why are some models
+saturated?</a></li>
+<li><a href="#what-does-zero-degrees-of-freedom-mean" id="toc-what-does-zero-degrees-of-freedom-mean">14. What does zero
+degrees of freedom mean?</a></li>
+<li><a href="#what-does-negative-degrees-of-freedom-mean" id="toc-what-does-negative-degrees-of-freedom-mean">15. What does
+negative degrees of freedom mean?</a></li>
+<li><a href="#what-is-the-difference-between-γ-and-b" id="toc-what-is-the-difference-between-γ-and-b">16. What is the
+difference between Γ and B?</a></li>
+<li><a href="#what-is-a-modification-index" id="toc-what-is-a-modification-index">17. What is a modification
+index?</a></li>
+<li><a href="#why-should-modification-indices-not-be-followed-automatically" id="toc-why-should-modification-indices-not-be-followed-automatically">18.
+Why should modification indices not be followed automatically?</a></li>
+<li><a href="#what-is-the-difference-between-a-direct-and-indirect-effect" id="toc-what-is-the-difference-between-a-direct-and-indirect-effect">19.
+What is the difference between a direct and indirect effect?</a></li>
+<li><a href="#which-paths-are-theoretically-most-important" id="toc-which-paths-are-theoretically-most-important">20. Which paths
+are theoretically most important?</a></li>
+<li><a href="#how-should-measurement-model-fit-be-evaluated" id="toc-how-should-measurement-model-fit-be-evaluated">21. How should
+measurement-model fit be evaluated?</a></li>
+<li><a href="#how-should-structural-model-fit-be-evaluated" id="toc-how-should-structural-model-fit-be-evaluated">22. How should
+structural-model fit be evaluated?</a></li>
+<li><a href="#what-conclusions-can-be-drawn-from-standardized-estimates" id="toc-what-conclusions-can-be-drawn-from-standardized-estimates">23.
+What conclusions can be drawn from standardized estimates?</a></li>
+<li><a href="#what-limitations-should-be-considered" id="toc-what-limitations-should-be-considered">24. What limitations
+should be considered?</a></li>
+</ul></li>
+<li><a href="#summary-of-important-lessons" id="toc-summary-of-important-lessons">Summary of Important
+Lessons</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
+<li><a href="#appendix-publication-links" id="toc-appendix-publication-links">Appendix: Publication Links</a></li>
+</ul>
+</nav>
+<h1 id="introduction">Introduction</h1>
+<h2 id="purpose-of-the-assignment">Purpose of the Assignment</h2>
+<p>This study note summarizes the UCLA seminar <strong>Introduction to
+Structural Equation Modeling (SEM) in R with lavaan</strong>. The
+seminar uses student academic-achievement data to show how ordinary
+regression, multiple regression, multivariate regression, path analysis,
+confirmatory factor analysis, and structural regression can be
+represented within the broader SEM framework.</p>
+<p>The goal is not to memorize syntax. The goal is to connect theory,
+path diagrams, covariance matrices, <code>lavaan</code> syntax, model
+identification, model fit, and substantive interpretation.</p>
+<h2 id="what-is-structural-equation-modeling">What Is Structural
+Equation Modeling?</h2>
+<p>Structural equation modeling is a flexible linear-model framework
+that can estimate simultaneous regression equations and relationships
+involving both observed and latent variables. SEM combines two
+parts:</p>
+<ul>
+<li>The <strong>measurement model</strong> connects observed indicators
+to latent constructs.</li>
+<li>The <strong>structural model</strong> specifies regression paths
+among observed or latent variables.</li>
+</ul>
+<p>The UCLA seminar emphasizes that regression, multivariate regression,
+path analysis, CFA, and structural regression are special cases of SEM.
+The seminar assumes continuous, approximately normally distributed
+variables and focuses on basic matrix notation, identification, and
+model fit.</p>
+<h2 id="data-and-motivating-example">Data and motivating example</h2>
+<p>The example contains 500 students and nine observed variables:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Meaning</th>
+<th>Proposed role</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>motiv</code></td>
+<td>Motivation</td>
+<td>Indicator of Adjustment</td>
+</tr>
+<tr class="even">
+<td><code>harm</code></td>
+<td>Harmony</td>
+<td>Indicator of Adjustment</td>
+</tr>
+<tr class="odd">
+<td><code>stabi</code></td>
+<td>Stability</td>
+<td>Indicator of Adjustment</td>
+</tr>
+<tr class="even">
+<td><code>ppsych</code></td>
+<td>Negative parental psychology</td>
+<td>Indicator of Risk</td>
+</tr>
+<tr class="odd">
+<td><code>ses</code></td>
+<td>Socioeconomic status</td>
+<td>Indicator of Risk</td>
+</tr>
+<tr class="even">
+<td><code>verbal</code></td>
+<td>Verbal IQ</td>
+<td>Indicator of Risk</td>
+</tr>
+<tr class="odd">
+<td><code>read</code></td>
+<td>Reading</td>
+<td>Indicator of Achievement</td>
+</tr>
+<tr class="even">
+<td><code>arith</code></td>
+<td>Arithmetic</td>
+<td>Indicator of Achievement</td>
+</tr>
+<tr class="odd">
+<td><code>spell</code></td>
+<td>Spelling</td>
+<td>Indicator of Achievement</td>
+</tr>
+</tbody>
+</table>
+<h1 id="data-and-software">Data and Software</h1>
+<h2 id="required-packages-and-import">Required packages and import</h2>
+<p>```{r} install.packages(“lavaan”, dependencies = TRUE) # run once if
+needed library(lavaan)</p>
+<p>dat &lt;- read.csv(
+“https://stats.idre.ucla.edu/wp-content/uploads/2021/02/worland5.csv”
+)</p>
+<p>str(dat) head(dat) dim(dat)</p>
+<pre><code>
+The data contain 500 rows and nine numeric variables. The variables are centered and scaled in the UCLA example, so their means are approximately zero and their variances are approximately 100.
+
+## Sample covariance and correlation matrices
+
+```{r}
+S &lt;- cov(dat)
+R &lt;- cor(dat)
+
+round(S, 2)
+round(R, 2)</code></pre>
+<p>The diagonal of a covariance matrix contains variances, and the
+off-diagonal elements contain covariances. The sample covariance matrix
+is symmetric: the covariance of <code>motiv</code> with
+<code>harm</code> is the same as the covariance of <code>harm</code>
+with <code>motiv</code>.</p>
+<p>The population covariance matrix is written as <strong>Σ</strong> and
+is generally unknown. The sample covariance matrix is <strong>S =
+Σ̂</strong>, an estimate of the population matrix. The model-implied
+covariance matrix is <strong>Σ(θ)</strong>, the covariance matrix
+reproduced by the model’s estimated parameters θ. SEM asks whether a
+theoretically specified model can reproduce the observed covariance
+structure adequately.</p>
+<p><strong>Practice question:</strong> Does <code>cov(dat)</code> return
+the population covariance matrix?</p>
+<p><strong>Answer:</strong> No. The data represent a sample of 500
+students, so <code>cov(dat)</code> returns the sample covariance matrix
+<strong>S</strong>, not the unknown population matrix
+<strong>Σ</strong>.</p>
+<h1 id="sem-concepts">SEM Concepts</h1>
+<h2 id="observed-and-latent-variables">Observed and latent
+variables</h2>
+<p>An <strong>observed variable</strong> exists directly in the data
+file. For example, <code>motiv</code> and <code>read</code> are observed
+variables. A <strong>latent variable</strong> is a theoretical construct
+estimated from multiple observed indicators. For example,
+<code>adjust</code> is not a column in the data; it is defined from
+<code>motiv</code>, <code>harm</code>, and <code>stabi</code>.</p>
+<p>An <strong>indicator</strong> is an observed variable used to measure
+a factor. A <strong>factor loading</strong> is the path connecting an
+indicator to its latent factor. A high standardized loading means that
+the indicator shares substantial standardized variance with the
+factor.</p>
+<h2 id="exogenous-and-endogenous-variables">Exogenous and endogenous
+variables</h2>
+<p>An <strong>exogenous variable</strong> is not predicted by another
+variable in the model. It can be observed, such as <code>motiv</code> in
+a simple regression, or latent, such as <code>risk</code> when it is
+allowed to predict <code>adjust</code> and <code>achieve</code> but is
+not itself predicted.</p>
+<p>An <strong>endogenous variable</strong> is predicted by at least one
+other variable in the model. In the structural model,
+<code>achieve</code> is endogenous because it is predicted by
+<code>adjust</code> and <code>risk</code>. A variable’s observed name
+does not determine whether it is exogenous or endogenous; its role in
+the model does.</p>
+<h2 id="measurement-and-structural-models">Measurement and structural
+models</h2>
+<p>The measurement model answers: <strong>How are latent constructs
+measured?</strong> For example:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>adjust <span class="ot">=</span><span class="er">~</span> motiv <span class="sc">+</span> harm <span class="sc">+</span> stabi</span></code></pre></div>
+<p>The structural model answers: <strong>How are constructs
+related?</strong> For example:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>achieve <span class="sc">~</span> adjust <span class="sc">+</span> risk</span></code></pre></div>
+<p>Together, these two components form a structural equation model.</p>
+<h2 id="path-diagram-interpretation">Path-diagram interpretation</h2>
+<p>In a path diagram, squares usually represent observed variables,
+circles represent latent variables, triangles represent means or
+intercepts, one-way arrows represent regression or loading paths, and
+two-way arrows represent variances or covariances.</p>
+<p>For example, the structural model can be described as:</p>
+<pre class="text"><code>Adjustment  ───────►
+                    Achievement
+Risk        ───────►</code></pre>
+<p><code>adjust</code> and <code>risk</code> are exogenous latent
+predictors, while <code>achieve</code> is an endogenous latent outcome.
+The measurement arrows from each factor to its indicators are separate
+from the structural arrows among the factors.</p>
+<h2 id="matrix-notation">Matrix notation</h2>
+<p>LISREL notation helps organize SEM parameters:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Matrix/symbol</th>
+<th>Meaning in this seminar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Λ (Lambda)</td>
+<td>Factor loadings connecting latent and observed variables</td>
+</tr>
+<tr class="even">
+<td>Γ (Gamma)</td>
+<td>Paths from exogenous variables to endogenous variables</td>
+</tr>
+<tr class="odd">
+<td>B (Beta)</td>
+<td>Paths among endogenous variables</td>
+</tr>
+<tr class="even">
+<td>Φ (Phi)</td>
+<td>Variances and covariances among exogenous variables</td>
+</tr>
+<tr class="odd">
+<td>Ψ (Psi)</td>
+<td>Residual variances and covariances among endogenous variables</td>
+</tr>
+<tr class="even">
+<td>Θ (Theta)</td>
+<td>Residual variances/covariances of observed indicators</td>
+</tr>
+<tr class="odd">
+<td>Σ(θ)</td>
+<td>Model-implied covariance matrix</td>
+</tr>
+</tbody>
+</table>
+<h1 id="lavaan-syntax"><code>lavaan</code> Syntax</h1>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Operator</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>~</code></td>
+<td>Regression or prediction</td>
+<td><code>read ~ motiv</code></td>
+</tr>
+<tr class="even">
+<td><code>=~</code></td>
+<td>Defines a latent factor by indicators</td>
+<td><code>adjust =~ motiv + harm + stabi</code></td>
+</tr>
+<tr class="odd">
+<td><code>~~</code></td>
+<td>Variance or covariance</td>
+<td><code>motiv ~~ harm</code></td>
+</tr>
+<tr class="even">
+<td><code>~1</code></td>
+<td>Estimates an intercept or mean</td>
+<td><code>read ~ 1</code></td>
+</tr>
+<tr class="odd">
+<td><code>1*</code></td>
+<td>Fixes a parameter to 1</td>
+<td><code>f =~ 1*q01</code></td>
+</tr>
+<tr class="even">
+<td><code>NA*</code></td>
+<td>Frees a parameter that would otherwise be fixed</td>
+<td><code>f =~ NA*q01</code></td>
+</tr>
+<tr class="odd">
+<td><code>a*</code></td>
+<td>Labels a parameter for constraints</td>
+<td><code>f =~ a*q01</code></td>
+</tr>
+</tbody>
+</table>
+<p>The default marker-variable identification method fixes one loading
+per factor to 1. This establishes the scale of the latent variable. The
+remaining loadings, residual variances, factor variances, and relevant
+covariances are estimated as free parameters.</p>
+<h1 id="regression-and-path-analysis">Regression and Path Analysis</h1>
+<h2 id="simple-regression-model-1a">Simple regression: Model 1A</h2>
+<p>The simple regression is:</p>
+<p>[ read_i = + motiv_i + _i. ]</p>
+<p>```{r} fit_lm &lt;- lm(read ~ motiv, data = dat) summary(fit_lm)</p>
+<p>m1 &lt;- ’ read ~ 1 + motiv motiv ~~ motiv ’</p>
+<p>fit_lavaan &lt;- sem(m1, data = dat) summary(fit_lavaan)</p>
+<pre><code>
+The regression coefficient is approximately **0.530**. A one-unit increase in motivation is associated with an estimated .530-unit increase in reading. The intercept is approximately zero because the variables are centered. The residual standard error from `lm()` is approximately 8.488, corresponding to a residual variance of about 72.04. The `lavaan` estimate is approximately 71.77 because maximum likelihood uses a slightly different variance divisor than ordinary least squares.
+
+The model has zero degrees of freedom because it is saturated: the number of free parameters is sufficient to reproduce the observed covariance information exactly. A zero-degree-of-freedom model cannot be tested for overall fit because it has no restrictions left to test.
+
+## Least squares and maximum likelihood
+
+`lm()` estimates regression coefficients with least squares. `lavaan` uses maximum likelihood by default for continuous variables. In this example, the regression coefficient and intercept are essentially the same under both approaches, while the residual variance differs slightly because of the estimation convention. Estimation method matters more when the model is complex, variables are non-normal, or missing-data assumptions become important.
+
+## Multiple regression: Model 2
+
+```{r}
+m2 &lt;- &#39;
+  read ~ 1 + ppsych + motiv
+&#39;
+fit2 &lt;- sem(m2, data = dat)
+summary(fit2, standardized = TRUE)</code></pre>
+<p>Multiple regression has one endogenous observed outcome,
+<code>read</code>, and two exogenous observed predictors,
+<code>ppsych</code> and <code>motiv</code>. The coefficient for each
+predictor is a partial effect: it estimates the relationship with
+reading while holding the other predictor constant. Exogenous predictors
+are allowed to covary by default in <code>lavaan</code>.</p>
+<h2 id="multivariate-regression">Multivariate regression</h2>
+<p>```{r} m3a &lt;- ’ read ~ ppsych + motiv arith ~ motiv ’ fit3a &lt;-
+sem(m3a, data = dat) summary(fit3a, fit.measures = TRUE, standardized =
+TRUE)</p>
+<p>m3d &lt;- ’ read ~ ppsych + motiv arith ~ motiv read ~~ 0*arith ’
+fit3d &lt;- sem(m3d, data = dat) summary(fit3d, fit.measures = TRUE,
+standardized = TRUE)</p>
+<p>m3e &lt;- ’ read ~ ppsych + motiv arith ~ ppsych + motiv ppsych ~~
+motiv ppsych ~~ ppsych motiv ~~ motiv ’ fit3e &lt;- sem(m3e, data = dat)
+summary(fit3e, fit.measures = TRUE, standardized = TRUE)</p>
+<pre><code>
+Multivariate regression contains multiple endogenous outcomes. Model 3A predicts reading from `ppsych` and `motiv`, and arithmetic from `motiv`. Model 3D additionally fixes the residual covariance between reading and arithmetic to zero. Model 3E predicts both outcomes from both predictors and explicitly estimates the covariance between the exogenous predictors. The model-implied covariance restrictions determine the degrees of freedom.
+
+The fully saturated model reproduces the sample covariance matrix exactly and therefore has zero degrees of freedom. A model with negative degrees of freedom is underidentified: it attempts to estimate more free parameters than the observed covariance information can support.
+
+## Path analysis: Model 4A
+
+```{r}
+m4a &lt;- &#39;
+  read ~ ppsych + motiv
+  arith ~ motiv + read
+&#39;
+
+fit4a &lt;- sem(m4a, data = dat)
+summary(fit4a, fit.measures = TRUE, standardized = TRUE)</code></pre>
+<p>Path analysis extends regression by allowing multiple equations and
+indirect relationships among observed variables. In Model 4A:</p>
+<ul>
+<li><code>read</code> is predicted by <code>ppsych</code> and
+<code>motiv</code>.</li>
+<li><code>arith</code> is predicted by <code>motiv</code> and
+<code>read</code>.</li>
+<li>The path <code>motiv → read → arith</code> is an indirect route from
+motivation to arithmetic.</li>
+<li><code>ppsych → read → arith</code> is another possible indirect
+route.</li>
+</ul>
+<p>The main Model 4A fit is χ²(1) = 4.87, <em>p</em> ≈ .301, CFI ≈ .999,
+TLI ≈ .998, and RMSEA ≈ .021. Taken together, these values suggest that
+the restricted path model fits reasonably well.</p>
+<h1 id="model-fit-statistics">Model-Fit Statistics</h1>
+<h2 id="chi-square">Chi-square</h2>
+<p>The model chi-square tests the null hypothesis that the model-implied
+covariance matrix equals the population covariance matrix. A
+nonsignificant chi-square is consistent with exact fit, but the test is
+sensitive to sample size and can reject small discrepancies in large
+samples. Chi-square should therefore be interpreted with approximate-fit
+indices and substantive reasoning.</p>
+<h2 id="cfi-and-tli">CFI and TLI</h2>
+<p>CFI compares the proposed model with a baseline model in which
+observed variables are uncorrelated. Values closer to 1 indicate better
+comparative fit. TLI also compares the proposed and baseline models but
+includes a stronger penalty for complexity. Neither index should be
+interpreted in isolation.</p>
+<h2 id="rmsea-and-srmr">RMSEA and SRMR</h2>
+<p>RMSEA evaluates approximate error of fit per degree of freedom and
+should be reported with a confidence interval when available. Lower
+values indicate less approximation error. SRMR summarizes the
+standardized residual differences between observed and model-implied
+correlations or covariances. Again, researchers should examine the
+pattern across several indices.</p>
+<h2 id="saturated-just-identified-and-over-identified-models">Saturated,
+just-identified, and over-identified models</h2>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 40%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model type</th>
+<th style="text-align: right;">Degrees of freedom</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Saturated</td>
+<td style="text-align: right;">0</td>
+<td>Model reproduces the observed covariance matrix exactly; no global
+fit test is available.</td>
+</tr>
+<tr class="even">
+<td>Just-identified</td>
+<td style="text-align: right;">0</td>
+<td>The number of restrictions and free parameters exactly balances the
+available information.</td>
+</tr>
+<tr class="odd">
+<td>Over-identified</td>
+<td style="text-align: right;">Positive</td>
+<td>The model imposes testable restrictions, so global fit can be
+evaluated.</td>
+</tr>
+<tr class="even">
+<td>Under-identified</td>
+<td style="text-align: right;">Negative or otherwise not estimable</td>
+<td>Too many free parameters or insufficient information; the model
+cannot be uniquely estimated.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="modification-indices">Modification Indices</h1>
+<p><code>{r} modindices(fit4a, sort. = TRUE) |&gt;   head(10)</code></p>
+<p>A modification index estimates the expected reduction in model
+chi-square if one currently fixed parameter were freely estimated. Each
+modification index corresponds approximately to a one-degree-of-freedom
+change. The expected parameter change estimates the size and direction
+of the proposed new parameter.</p>
+<p>A large modification index is diagnostic information, not an
+automatic command. Adding a path or residual covariance only because it
+improves fit can capitalize on chance and produce an overfit model that
+fails to replicate. A modification should be considered only when it has
+a substantive theoretical justification, is clearly reported, and is
+evaluated in an explicitly labeled alternative model.</p>
+<p>The best practice is to use modification indices to identify possible
+areas of model strain, then return to theory, measurement design, and
+prior evidence before changing the model.</p>
+<h1 id="measurement-model">Measurement Model</h1>
+<h2 id="model-specification">Model specification</h2>
+<p>```{r} measurement_model &lt;- ’ adjust =~ motiv + harm + stabi risk
+=~ verbal + ses + ppsych achieve =~ read + arith + spell ’</p>
+<p>fit_measurement &lt;- cfa( measurement_model, data = dat )</p>
+<p>summary( fit_measurement, fit.measures = TRUE, standardized = TRUE
+)</p>
+<pre><code>
+This model has three latent factors. `adjust` is measured by motivation, harmony, and stability. `risk` is measured by verbal IQ, SES, and negative parental psychology. `achieve` is measured by reading, arithmetic, and spelling.
+
+The measurement model fits reasonably by some comparative criteria but not perfectly: the estimated fit is approximately χ²(24) = 149.14, CFI = .951, TLI = .927, and RMSEA = .102. The achievement indicators have strong standardized loadings, while the risk indicators are more moderate. The result should be interpreted as evidence that the proposed factors capture important common variance, with some remaining model misfit.
+
+## Factor loadings and residuals
+
+A loading represents the expected change in an observed indicator associated with a one-unit change in the latent factor. Standardized loadings make indicators easier to compare because both the indicator and factor are placed on standardized scales. A residual variance represents indicator-specific variance not explained by the factor.
+
+Approximate standardized loadings from the model are:
+
+| Factor | Indicator | Standardized loading |
+|---|---|---:|
+| Adjustment | `motiv` | .932 |
+| Adjustment | `harm` | .825 |
+| Adjustment | `stabi` | .646 |
+| Risk | `verbal` | .727 |
+| Risk | `ses` | .593 |
+| Risk | `ppsych` | −.566 |
+| Achievement | `read` | .942 |
+| Achievement | `arith` | .789 |
+| Achievement | `spell` | .919 |
+
+The negative loading for `ppsych` is substantively sensible because the variable represents negative parental psychology: greater risk is associated with lower values on the positive adjustment/achievement-related direction of the factor.
+
+# Structural Regression Model
+
+## One endogenous latent variable: Model 6A
+
+```{r}
+structural_model &lt;- &#39;
+  # measurement model
+  adjust  =~ motiv + harm + stabi
+  risk    =~ verbal + ses + ppsych
+  achieve =~ read + arith + spell
+
+  # structural model
+  achieve ~ adjust + risk
+&#39;
+
+fit_structural &lt;- sem(
+  structural_model,
+  data = dat
+)
+
+summary(
+  fit_structural,
+  fit.measures = TRUE,
+  standardized = TRUE
+)</code></pre>
+<p>The structural model retains the three measurement models and adds
+regression paths from <code>adjust</code> and <code>risk</code> to
+<code>achieve</code>. Approximate standardized structural paths are:</p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 40%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Structural path</th>
+<th style="text-align: right;">Standardized estimate</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>achieve ~ adjust</code></td>
+<td style="text-align: right;">.374</td>
+<td>Higher adjustment is associated with higher achievement, controlling
+for risk.</td>
+</tr>
+<tr class="even">
+<td><code>achieve ~ risk</code></td>
+<td style="text-align: right;">.559</td>
+<td>Risk has a larger standardized association with achievement in this
+model.</td>
+</tr>
+</tbody>
+</table>
+<p>The model fit is approximately χ²(24) = 149.15, CFI = .951, TLI =
+.927, and RMSEA = .102. The structural paths are measurement-adjusted
+associations among latent constructs. They should not automatically be
+described as causal effects because the SEM output alone does not
+establish temporal order, eliminate omitted variables, or prove causal
+identification.</p>
+<h2 id="two-endogenous-latent-variables-model-6b">Two endogenous latent
+variables: Model 6B</h2>
+<p>```{r} structural_model_2 &lt;- ’ adjust =~ motiv + harm + stabi risk
+=~ verbal + ses + ppsych achieve =~ read + arith + spell</p>
+<p>adjust ~ risk achieve ~ adjust + risk ’</p>
+<p>fit_structural_2 &lt;- sem( structural_model_2, data = dat )</p>
+<p>summary( fit_structural_2, fit.measures = TRUE, standardized = TRUE )
+```</p>
+<p>In Model 6B, <code>adjust</code> becomes endogenous because it is
+predicted by <code>risk</code>. <code>achieve</code> is also endogenous
+because it is predicted by both <code>adjust</code> and
+<code>risk</code>. Approximate standardized paths are:</p>
+<ul>
+<li><code>adjust ~ risk</code>: .468</li>
+<li><code>achieve ~ adjust</code>: .370</li>
+<li><code>achieve ~ risk</code>: .563</li>
+</ul>
+<p>This model represents both a direct path from risk to achievement and
+a possible indirect path from risk to achievement through adjustment.
+The indirect effect can be expressed as the product of the two relevant
+paths: <code>risk → adjust</code> multiplied by
+<code>adjust → achieve</code>. In a causal interpretation, this would be
+a mediation pathway, but a causal mediation claim requires design and
+assumptions beyond the SEM output.</p>
+<h2 id="gamma-and-beta-matrices">Gamma and Beta matrices</h2>
+<p>The <strong>Γ matrix</strong> represents paths from exogenous
+variables to endogenous variables. In Model 6B, the path from exogenous
+<code>risk</code> to endogenous <code>adjust</code> is represented in Γ
+if <code>risk</code> is treated as exogenous.</p>
+<p>The <strong>B matrix</strong> represents paths among endogenous
+variables. The path from endogenous <code>adjust</code> to endogenous
+<code>achieve</code> belongs in B. The distinction is based on the
+model’s exogenous/endogenous classification, not simply on whether a
+variable is observed or latent.</p>
+<h1 id="practice-questions-and-answers">Practice Questions and
+Answers</h1>
+<h2 id="what-is-structural-equation-modeling-1">1. What is structural
+equation modeling?</h2>
+<p>SEM is a general linear-model framework that combines measurement
+models and structural regression equations. It can estimate
+relationships among observed variables, latent variables, and their
+indicators in one coherent model.</p>
+<h2 id="which-statistical-models-are-special-cases-of-sem">2. Which
+statistical models are special cases of SEM?</h2>
+<p>Simple regression, multiple regression, multivariate regression, path
+analysis, CFA, and structural regression can all be represented as
+special cases of SEM.</p>
+<h2 id="what-is-the-difference-between-an-observed-and-latent-variable">3.
+What is the difference between an observed and latent variable?</h2>
+<p>An observed variable is directly present in the data, such as
+<code>read</code>. A latent variable is an unobserved construct
+estimated from indicators, such as <code>achieve</code> measured by
+reading, arithmetic, and spelling.</p>
+<h2 id="what-is-the-difference-between-exogenous-and-endogenous-variables">4.
+What is the difference between exogenous and endogenous variables?</h2>
+<p>An exogenous variable is not predicted by another variable in the
+model. An endogenous variable has at least one incoming regression path.
+In Model 6A, <code>risk</code> and <code>adjust</code> are exogenous and
+<code>achieve</code> is endogenous.</p>
+<h2 id="what-is-the-difference-between-a-measurement-and-structural-model">5.
+What is the difference between a measurement and structural model?</h2>
+<p>The measurement model specifies how observed indicators measure
+latent factors. The structural model specifies regression relationships
+among constructs or variables.</p>
+<h2 id="what-does-mean-in-lavaan">6. What does <code>~</code> mean in
+<code>lavaan</code>?</h2>
+<p>It specifies a regression path. For example,
+<code>read ~ motiv</code> means that reading is modeled as an outcome
+predicted by motivation.</p>
+<h2 id="what-does-mean">7. What does <code>=~</code> mean?</h2>
+<p>It defines a latent factor using indicators.
+<code>adjust =~ motiv + harm + stabi</code> states that adjustment is
+measured by those three observed variables.</p>
+<h2 id="what-does-mean-1">8. What does <code>~~</code> mean?</h2>
+<p>It specifies a variance or covariance. <code>motiv ~~ motiv</code>
+estimates the variance of motivation, while <code>motiv ~~ harm</code>
+estimates their covariance.</p>
+<h2 id="what-is-the-difference-between-a-regression-path-and-a-factor-loading">9.
+What is the difference between a regression path and a factor
+loading?</h2>
+<p>A regression path describes prediction among variables or constructs.
+A factor loading describes the relationship between an indicator and its
+latent factor. Both are represented by one-way arrows, but they answer
+different theoretical questions.</p>
+<h2 id="what-is-the-difference-between-s-and-σθ">10. What is the
+difference between S and Σ(θ)?</h2>
+<p>S is the sample covariance matrix calculated from observed data. Σ(θ)
+is the covariance matrix implied by the estimated model parameters. SEM
+evaluates how closely Σ(θ) reproduces S.</p>
+<h2 id="why-does-cov-produce-a-sample-covariance-matrix">11. Why does
+<code>cov()</code> produce a sample covariance matrix?</h2>
+<p>Because it calculates covariance from the observed sample rather than
+from the entire population. The population covariance Σ is generally
+unknown.</p>
+<h2 id="what-is-the-difference-between-multiple-and-multivariate-regression">12.
+What is the difference between multiple and multivariate
+regression?</h2>
+<p>Multiple regression has one outcome and multiple predictors.
+Multivariate regression has multiple outcomes, each of which can have
+one or more predictors.</p>
+<h2 id="why-are-some-models-saturated">13. Why are some models
+saturated?</h2>
+<p>A model is saturated when it has enough free parameters to reproduce
+every observed covariance and mean relationship. It has zero degrees of
+freedom and therefore no testable global restrictions.</p>
+<h2 id="what-does-zero-degrees-of-freedom-mean">14. What does zero
+degrees of freedom mean?</h2>
+<p>It means the model is just-identified or saturated. The model can be
+estimated, but global fit cannot be evaluated because the model has no
+remaining restrictions.</p>
+<h2 id="what-does-negative-degrees-of-freedom-mean">15. What does
+negative degrees of freedom mean?</h2>
+<p>Negative degrees of freedom indicate underidentification: the model
+contains more free parameters than the data provide information to
+estimate. The model must be simplified or otherwise constrained.</p>
+<h2 id="what-is-the-difference-between-γ-and-b">16. What is the
+difference between Γ and B?</h2>
+<p>Γ contains paths from exogenous to endogenous variables. B contains
+paths among endogenous variables. In Model 6B,
+<code>risk → adjust</code> is a Γ path and <code>adjust → achieve</code>
+is a B path.</p>
+<h2 id="what-is-a-modification-index">17. What is a modification
+index?</h2>
+<p>A modification index estimates the expected decrease in chi-square if
+a fixed parameter were freed. It is a one-degree-of-freedom diagnostic
+for a possible model change.</p>
+<h2 id="why-should-modification-indices-not-be-followed-automatically">18.
+Why should modification indices not be followed automatically?</h2>
+<p>They are data-driven suggestions and can encourage overfitting. A
+large index may reflect sampling-specific noise, omitted theory, or an
+incorrectly specified measurement model. Any change must be
+theoretically justified and transparently reported.</p>
+<h2 id="what-is-the-difference-between-a-direct-and-indirect-effect">19.
+What is the difference between a direct and indirect effect?</h2>
+<p>A direct effect is a path connecting a predictor to an outcome. An
+indirect effect passes through an intervening variable. In Model 6B,
+<code>risk → adjust → achieve</code> is an indirect route.</p>
+<h2 id="which-paths-are-theoretically-most-important">20. Which paths
+are theoretically most important?</h2>
+<p>The paths from adjustment and risk to achievement are central because
+they represent the proposed explanation of academic achievement. In
+Model 6B, the path from risk to adjustment is also important because it
+creates the possible indirect pathway.</p>
+<h2 id="how-should-measurement-model-fit-be-evaluated">21. How should
+measurement-model fit be evaluated?</h2>
+<p>Researchers should examine chi-square, degrees of freedom, CFI, TLI,
+RMSEA with its interval, SRMR, standardized loadings, residuals,
+reliability, and substantive theory. No single index proves that a
+measurement model is valid.</p>
+<h2 id="how-should-structural-model-fit-be-evaluated">22. How should
+structural-model fit be evaluated?</h2>
+<p>Structural-model fit should be evaluated with the same overall fit
+information, while also interpreting the structural paths, residual
+variances, factor covariances, and whether the added structural
+restrictions are theoretically defensible.</p>
+<h2 id="what-conclusions-can-be-drawn-from-standardized-estimates">23.
+What conclusions can be drawn from standardized estimates?</h2>
+<p>Standardized estimates allow comparison across variables measured on
+different scales. They describe the strength and direction of
+relationships in standard-deviation units, but they do not by themselves
+establish causality.</p>
+<h2 id="what-limitations-should-be-considered">24. What limitations
+should be considered?</h2>
+<p>The example assumes continuous and approximately normal variables,
+uses cross-sectional observational data, and depends on the proposed
+measurement structure. Fit statistics are sample-dependent, latent
+factors require valid indicators, and a good-fitting model can still be
+theoretically wrong or noncausal.</p>
+<h1 id="summary-of-important-lessons">Summary of Important Lessons</h1>
+<ol type="1">
+<li>SEM is a framework that includes regression, path analysis, CFA, and
+structural regression.</li>
+<li>Measurement and structural models answer different questions and
+should be interpreted separately.</li>
+<li><code>=~</code> defines measurement, <code>~</code> defines
+regression, and <code>~~</code> defines variance or covariance.</li>
+<li>Identification is necessary before estimation; degrees of freedom
+reflect testable restrictions.</li>
+<li>A saturated model can estimate parameters but cannot be judged by
+global fit.</li>
+<li>Fit statistics should be interpreted as a pattern, not one at a
+time.</li>
+<li>Modification indices are diagnostic tools and do not replace
+theory.</li>
+<li>Standardized loadings show how well indicators represent
+factors.</li>
+<li>A structural path is an estimated association unless causal
+assumptions are separately justified.</li>
+<li>Reproducible SEM requires clear data preparation, syntax, output,
+interpretation, and transparent model decisions.</li>
+</ol>
+<h1 id="references">References</h1>
+<p>UCLA Statistical Methods and Data Analytics. n.d. “Introduction to
+Structural Equation Modeling (SEM) in R with lavaan.” Accessed October
+4, 2026. <a href="https://stats.oarc.ucla.edu/r/seminars/rsem/">https://stats.oarc.ucla.edu/r/seminars/rsem/</a>.</p>
+<p>Rosseel, Yves. 2012. “lavaan: An R Package for Structural Equation
+Modeling.” <em>Journal of Statistical Software</em> 48 (2): 1–36.
+https://doi.org/10.18637/jss.v048.i02.</p>
+<h1 id="appendix-publication-links">Appendix: Publication Links</h1>
+<ul>
+<li><a href="https://github.com/Min-woo0210/IBM6500-2-">GitHub
+Repository</a></li>
+<li><a href="https://min-woo0210.github.io/IBM6500-2-/M13-SEM-in-R-with-lavaan-Study-Note/">GitHub
+Pages Website</a></li>
+</ul>
+<p>The final source file is
+<code>M13-SEM-in-R-with-lavaan-Study-Note.qmd</code>, and the rendered
+HTML file is <code>M13-SEM-in-R-with-lavaan-Study-Note.html</code>. The
+Appendix contains clickable links for the repository and the GitHub
+Pages publication.</p>
+</body>
+</html>

@@ -1,0 +1,243 @@
+---
+title: "Case 31: Measurement Model Assessment"
+subtitle: "Confirmatory Factor Analysis of Employee Proficiencies and Operational Effectiveness"
+author: "Jungmin Woo"
+date: "2026-11-20"
+format:
+  html:
+    toc: true
+    toc-title: "Contents"
+    toc-depth: 3
+    number-sections: true
+    smooth-scroll: true
+    embed-resources: true
+    css: styles.css
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Purpose and Case Context
+
+This report assesses the measurement model for Case 31: *Employees Federal Credit Union*. The goal is to determine whether the survey items provide defensible measures of two latent constructs:
+
+1. **Attitudes toward employee proficiencies**, measured by Q3–Q6.
+2. **Attitude toward operational effectiveness**, measured by Q9r, Q10, Q11, Q12, and Q31–Q34 after documenting the direction of each item.
+
+Confirmatory factor analysis (CFA) evaluates the measurement model. It does not test the substantive hypotheses in the Case 31 analysis table and does not establish causal relationships.
+
+# Learning Notes: CFA and Measurement Models
+
+A latent construct cannot be observed directly. Instead, it is represented by multiple observed indicators that are expected to share common variance. CFA begins with a theory-based measurement model and evaluates whether the observed covariance pattern is consistent with that model.
+
+The main questions in this report are:
+
+- Do the proposed indicators load substantially on their intended factors?
+- Does the overall model fit the observed data reasonably well?
+- Are the factors internally consistent and convergent?
+- Are employee proficiency and operational effectiveness empirically distinguishable?
+- Is the measurement model sufficiently defensible for later structural analysis?
+
+Single-item variables from the Case 31 questionnaire are not modeled as latent factors because a single observed item does not provide information about internal consistency or a measurement-error structure in the same way as a multi-item factor.
+
+# Case 31 Constructs and Indicators
+
+| Latent construct | Indicators used | Substantive meaning |
+|---|---|---|
+| Employee Proficiencies | Q3, Q4, Q5, Q6 | Employees are courteous, helpful, professional, and available. |
+| Operational Effectiveness | Q9r, Q10r, Q11r, Q12r, Q31, Q32, Q33, Q34 | Statements, account information, confidentiality, processing speed, member needs, and loan-application usability. |
+
+The original assignment names the operational indicators as Q9r–Q10, Q11–Q12, and Q31–Q34. Because the raw items do not all use the same direction, the final CFA variables are explicitly named with an `r` or `fav` suffix where a recoding was required.
+
+# Data Preparation and Reverse Coding
+
+## Import and inspection
+
+```{r}
+library(haven)
+library(dplyr)
+library(tidyr)
+library(lavaan)
+library(knitr)
+
+case31 <- read_sav("Case 31 Data_efcu_4.sav")
+
+names(case31)
+str(case31)
+nrow(case31)
+
+cfa_raw <- case31 |>
+  select(q3, q4, q5, q6, q9, q9_r, q10, q10_r, q11, q12,
+         q31, q32, q33, q34)
+
+colSums(is.na(cfa_raw))
+summary(cfa_raw)
+```
+
+The cleaned data contain 128 observations. The selected indicators contain no missing values in the provided cleaned file. The CFA therefore uses all 128 observations. If missing values were present in a future version of the file, `lavaan` could use full-information maximum likelihood through `missing = "fiml"` under the continuous-indicator model.
+
+## Verifying Q9r
+
+```{r}
+table(case31$q9, case31$q9_r, useNA = "ifany")
+case31 |>
+  summarise(
+    q9_min = min(q9, na.rm = TRUE),
+    q9_max = max(q9, na.rm = TRUE),
+    q9r_min = min(q9_r, na.rm = TRUE),
+    q9r_max = max(q9_r, na.rm = TRUE)
+  )
+```
+
+The cleaned data already contain `q9_r`, labeled `Q9r-Statements received - Frequency`. The observed mapping is consistent with the cleaned analysis variable: the original Q9 values 3 and 4 are represented as Q9r values 2 and 1. I therefore use the existing `q9_r` variable and do **not** reverse-code it a second time. This decision is documented rather than silently applying another transformation.
+
+## Aligning item direction
+
+The raw coding directions are not identical. Q10 is coded so that 1 means “Excellent” and 4 means “Poor”; Q11 uses 1 = “Yes” and 2 = “No”; and Q12 uses 1 = “Yes,” 2 = “No,” and 3 = “Uncertain.” To make larger values consistently represent more favorable operational evaluations, I use the existing `q10_r` and create explicit favorable-direction versions of Q11 and Q12.
+
+```{r}
+case31_cfa <- case31 |>
+  mutate(
+    q9r_final = q9_r,
+    q10r_final = q10_r,
+    q11r_final = 3 - q11,
+    q12r_final = 4 - q12
+  )
+
+case31_cfa |>
+  select(q9, q9r_final, q10, q10r_final, q11, q11r_final,
+         q12, q12r_final) |>
+  summary()
+```
+
+The recoding is auditable: Q9r and Q10r were already supplied in the cleaned data, while Q11r and Q12r are created with visible formulas. Q11r equals 2 for “Yes” and 1 for “No.” Q12r equals 3 for “Yes,” 2 for “Uncertain,” and 1 for “No.”
+
+# Hypothesized Two-Factor Measurement Model
+
+The two factors are expected to be related because members’ experiences with employees may influence their broader evaluation of credit-union operations. They are nevertheless specified as distinct factors because employee behavior and organizational operations are conceptually different domains.
+
+The model is identified by fixing the first loading of each factor to 1.0 in `lavaan` by default. Each factor has multiple indicators, and the two factors are allowed to correlate.
+
+```{r}
+measurement_model <- '
+  Employee_Proficiencies =~ q3 + q4 + q5 + q6
+  Operational_Effectiveness =~ q9r_final + q10r_final + q11r_final + q12r_final +
+    q31 + q32 + q33 + q34
+'
+
+fit <- cfa(
+  measurement_model,
+  data = case31_cfa,
+  estimator = "ML",
+  missing = "fiml",
+  std.lv = FALSE
+)
+
+summary(fit, fit.measures = TRUE, standardized = TRUE)
+```
+
+# CFA Results
+
+## Model fit
+
+| Fit index | Result | General interpretation |
+|---|---:|---|
+| χ²(53) | 126.85, *p* < .001 | Exact-fit test rejects perfect fit. |
+| CFI | .818 | Below common approximate-fit benchmarks. |
+| TLI | .774 | Below common approximate-fit benchmarks. |
+| RMSEA | .105 | Indicates poor approximate fit; 90% CI should be obtained from `lavaan`. |
+| SRMR | .102 | Above commonly preferred values. |
+
+The proposed two-factor model does not fit the data well. The chi-square test is significant, and the incremental fit indices are below common benchmarks such as .90 or .95. RMSEA is approximately .105 and SRMR is approximately .102, both suggesting substantial residual misfit. These results mean that the one-factor specification for operational effectiveness should not be accepted automatically.
+
+Small numerical differences may occur when the code is re-rendered in a different R/lavaan version or with a robust estimator. The substantive conclusion is stable: the hypothesized model shows inadequate fit and requires measurement-model qualification.
+
+## Standardized factor loadings
+
+| Factor | Indicator | Std. loading | Significance | Assessment |
+|---|---|---:|---:|---|
+| Employee Proficiencies | Q3 | .737 | — | Strong |
+| Employee Proficiencies | Q4 | .907 | *p* < .001 | Strong |
+| Employee Proficiencies | Q5 | .778 | *p* < .001 | Strong |
+| Employee Proficiencies | Q6 | .753 | *p* < .001 | Strong |
+| Operational Effectiveness | Q9r | .240 | — | Very weak |
+| Operational Effectiveness | Q10r | .431 | *p* = .042 | Weak |
+| Operational Effectiveness | Q11r | .306 | *p* = .068 | Very weak |
+| Operational Effectiveness | Q12r | .299 | *p* = .071 | Very weak |
+| Operational Effectiveness | Q31 | .313 | *p* = .066 | Very weak |
+| Operational Effectiveness | Q32 | .585 | *p* = .031 | Moderate |
+| Operational Effectiveness | Q33 | .456 | *p* = .039 | Weak |
+| Operational Effectiveness | Q34 | .265 | *p* = .087 | Very weak |
+
+The employee-proficiency indicators perform well: all standardized loadings are above .70, showing that Q3–Q6 share substantial variance with their intended factor. The operational-effectiveness indicators are much weaker. Only Q32 reaches the moderate range, while most of the other indicators fall below the commonly used .50 minimum guideline. This pattern suggests that the operational items do not behave as a coherent single construct in this sample.
+
+```{r}
+standardizedSolution(fit) |>
+  filter(op == "=~") |>
+  select(lhs, rhs, est.std, pvalue)
+```
+
+## Reliability and convergent validity
+
+Using the standardized loadings, composite reliability (CR) and average variance extracted (AVE) are summarized below. These calculations are based on the usual congeneric-factor formulas and should be interpreted alongside the model-fit results.
+
+| Factor | Composite reliability | AVE | Interpretation |
+|---|---:|---:|---|
+| Employee Proficiencies | .874 | .635 | Good internal consistency and convergent evidence |
+| Operational Effectiveness | .550 | .143 | Poor internal consistency and weak convergent evidence |
+
+Employee proficiencies show strong reliability and convergent validity. The operational-effectiveness factor does not. Its low AVE means that the factor explains only a small proportion of the average variance in its indicators, and its CR is below common practical guidelines. The weak loadings and poor global fit reinforce the conclusion that the eight operational items should not automatically be averaged into one scale.
+
+```{r}
+std_loadings <- standardizedSolution(fit) |>
+  filter(op == "=~") |>
+  group_by(lhs) |>
+  summarise(
+    CR = (sum(est.std)^2) /
+      ((sum(est.std)^2) + sum(1 - est.std^2)),
+    AVE = mean(est.std^2),
+    .groups = "drop"
+  )
+
+std_loadings
+```
+
+## Discriminant validity
+
+The estimated latent-factor correlation is approximately .70. This indicates that members’ views of employee proficiencies and operational effectiveness are related, but the correlation is not so high that the constructs are automatically identical. However, discriminant validity cannot be declared solely from the factor correlation because the operational factor has poor convergent evidence and poor overall model fit.
+
+The strongest evidence for conceptual distinction is that Q3–Q6 form a strong, coherent employee-proficiency cluster, while the operational indicators are heterogeneous. The more important limitation is that the operational factor itself is not measured consistently enough to support a confident discriminant-validity claim. A future analysis should compare theoretically justified alternatives, such as separate operational subdimensions, rather than adding correlated errors only to improve fit.
+
+```{r}
+lavInspect(fit, "cor.lv")
+modindices(fit, sort. = TRUE, minimum.value = 10) |>
+  head(10)
+```
+
+Modification indices may be used diagnostically, but I do not add correlated errors or delete items in the primary model. Any alternative model would need a substantive explanation based on the questionnaire and would have to be labeled and compared with the original model.
+
+# Interpretation and Conclusion
+
+The two-factor CFA provides strong evidence for the employee-proficiency construct. Q3–Q6 have strong standardized loadings, good composite reliability, and acceptable average variance extracted. These items can reasonably be treated as a latent employee-proficiency measure in a subsequent model.
+
+The evidence for the operational-effectiveness construct is substantially weaker. The one-factor model fits poorly, most operational indicators have weak loadings, and CR and AVE are low. The operational items cover several different experiences—statement frequency, statement quality, confidentiality, processing speed, service adequacy, and application simplicity—which may not represent one unidimensional factor. The result is therefore a measurement concern rather than evidence that the credit union’s operations are objectively poor.
+
+Before testing structural hypotheses, I would retain the employee-proficiency factor but investigate the operational indicators further. The next step could be to review the Case 31 measurement table and theory, test theoretically justified subdimensions, or analyze operational items separately. I would not use the current eight-item operational factor as an unquestioned composite or interpret the CFA as a causal test.
+
+# References
+
+Byrne, B. M. (2016). *Structural equation modeling with AMOS: Basic concepts, applications, and programming* (3rd ed.). Routledge.
+
+Hair, J. F., Black, W. C., Babin, B. J., & Anderson, R. E. (2019). *Multivariate data analysis* (8th ed.). Cengage.
+
+Rosseel, Y. (2012). lavaan: An R package for structural equation modeling. *Journal of Statistical Software, 48*(2), 1–36. https://doi.org/10.18637/jss.v048.i02
+
+# Appendix: Reproducibility and Publication Links
+
+- **GitHub repository:** [Open the GitHub repository](https://github.com/Min-woo0210/IBM6500-2-)
+- **GitHub Pages:** [Open the published GitHub Pages report](https://min-woo0210.github.io/IBM6500-2-/M13-Case31-Measurement-Model-Assessment/)
+- **Final source file:** `M13-Case31-Measurement-Model-Assessment.qmd`
+- **Rendered report:** `M13-Case31-Measurement-Model-Assessment.html`
+
+The report was checked for readable tables, working hyperlinks, and a complete Appendix. The GitHub repository and GitHub Pages links are included for the final publication workflow.

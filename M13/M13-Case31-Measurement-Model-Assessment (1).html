@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Jungmin Woo" />
+  <meta name="dcterms.date" content="2026-11-20" />
+  <title>Case 31: Measurement Model Assessment</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body { font-family: Georgia, serif; line-height: 1.55; max-width: 1050px; margin: 0 auto; padding: 2rem; color: #222; }
+h1, h2, h3 { color: #17365d; }
+table { border-collapse: collapse; width: 100%; margin: 1rem 0 1.5rem; }
+th, td { border: 1px solid #c9d3df; padding: .45rem .6rem; }
+th { background: #eaf1f8; }
+pre { background: #f5f5f5; border: 1px solid #ddd; padding: 1rem; overflow-x: auto; }
+.callout-note { background: #eef6ff; border-left: 5px solid #2f75b5; padding: 1rem; margin: 1rem 0; }
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Case 31: Measurement Model Assessment</h1>
+<p class="subtitle">Confirmatory Factor Analysis of Employee
+Proficiencies and Operational Effectiveness</p>
+<p class="author">Jungmin Woo</p>
+<p class="date">2026-11-20</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#purpose-and-case-context" id="toc-purpose-and-case-context">Purpose and Case Context</a></li>
+<li><a href="#learning-notes-cfa-and-measurement-models" id="toc-learning-notes-cfa-and-measurement-models">Learning Notes: CFA
+and Measurement Models</a></li>
+<li><a href="#case-31-constructs-and-indicators" id="toc-case-31-constructs-and-indicators">Case 31 Constructs and
+Indicators</a></li>
+<li><a href="#data-preparation-and-reverse-coding" id="toc-data-preparation-and-reverse-coding">Data Preparation and
+Reverse Coding</a>
+<ul>
+<li><a href="#import-and-inspection" id="toc-import-and-inspection">Import and inspection</a></li>
+<li><a href="#aligning-item-direction" id="toc-aligning-item-direction">Aligning item direction</a></li>
+</ul></li>
+<li><a href="#cfa-results" id="toc-cfa-results">CFA Results</a>
+<ul>
+<li><a href="#model-fit" id="toc-model-fit">Model fit</a></li>
+<li><a href="#standardized-factor-loadings" id="toc-standardized-factor-loadings">Standardized factor
+loadings</a></li>
+<li><a href="#reliability-and-convergent-validity" id="toc-reliability-and-convergent-validity">Reliability and convergent
+validity</a></li>
+</ul></li>
+<li><a href="#interpretation-and-conclusion" id="toc-interpretation-and-conclusion">Interpretation and
+Conclusion</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
+<li><a href="#appendix-reproducibility-and-publication-links" id="toc-appendix-reproducibility-and-publication-links">Appendix:
+Reproducibility and Publication Links</a></li>
+</ul>
+</nav>
+<h1 id="purpose-and-case-context">Purpose and Case Context</h1>
+<p>This report assesses the measurement model for Case 31: <em>Employees
+Federal Credit Union</em>. The goal is to determine whether the survey
+items provide defensible measures of two latent constructs:</p>
+<ol type="1">
+<li><strong>Attitudes toward employee proficiencies</strong>, measured
+by Q3–Q6.</li>
+<li><strong>Attitude toward operational effectiveness</strong>, measured
+by Q9r, Q10, Q11, Q12, and Q31–Q34 after documenting the direction of
+each item.</li>
+</ol>
+<p>Confirmatory factor analysis (CFA) evaluates the measurement model.
+It does not test the substantive hypotheses in the Case 31 analysis
+table and does not establish causal relationships.</p>
+<h1 id="learning-notes-cfa-and-measurement-models">Learning Notes: CFA
+and Measurement Models</h1>
+<p>A latent construct cannot be observed directly. Instead, it is
+represented by multiple observed indicators that are expected to share
+common variance. CFA begins with a theory-based measurement model and
+evaluates whether the observed covariance pattern is consistent with
+that model.</p>
+<p>The main questions in this report are:</p>
+<ul>
+<li>Do the proposed indicators load substantially on their intended
+factors?</li>
+<li>Does the overall model fit the observed data reasonably well?</li>
+<li>Are the factors internally consistent and convergent?</li>
+<li>Are employee proficiency and operational effectiveness empirically
+distinguishable?</li>
+<li>Is the measurement model sufficiently defensible for later
+structural analysis?</li>
+</ul>
+<p>Single-item variables from the Case 31 questionnaire are not modeled
+as latent factors because a single observed item does not provide
+information about internal consistency or a measurement-error structure
+in the same way as a multi-item factor.</p>
+<h1 id="case-31-constructs-and-indicators">Case 31 Constructs and
+Indicators</h1>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Latent construct</th>
+<th>Indicators used</th>
+<th>Substantive meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Employee Proficiencies</td>
+<td>Q3, Q4, Q5, Q6</td>
+<td>Employees are courteous, helpful, professional, and available.</td>
+</tr>
+<tr class="even">
+<td>Operational Effectiveness</td>
+<td>Q9r, Q10r, Q11r, Q12r, Q31, Q32, Q33, Q34</td>
+<td>Statements, account information, confidentiality, processing speed,
+member needs, and loan-application usability.</td>
+</tr>
+</tbody>
+</table>
+<p>The original assignment names the operational indicators as Q9r–Q10,
+Q11–Q12, and Q31–Q34. Because the raw items do not all use the same
+direction, the final CFA variables are explicitly named with an
+<code>r</code> or <code>fav</code> suffix where a recoding was
+required.</p>
+<h1 id="data-preparation-and-reverse-coding">Data Preparation and
+Reverse Coding</h1>
+<h2 id="import-and-inspection">Import and inspection</h2>
+<p>```{r} library(haven) library(dplyr) library(tidyr) library(lavaan)
+library(knitr)</p>
+<p>case31 &lt;- read_sav(“Case 31 Data_efcu_4.sav”)</p>
+<p>names(case31) str(case31) nrow(case31)</p>
+<p>cfa_raw &lt;- case31 |&gt; select(q3, q4, q5, q6, q9, q9_r, q10,
+q10_r, q11, q12, q31, q32, q33, q34)</p>
+<p>colSums(is.na(cfa_raw)) summary(cfa_raw)</p>
+<pre><code>
+The cleaned data contain 128 observations. The selected indicators contain no missing values in the provided cleaned file. The CFA therefore uses all 128 observations. If missing values were present in a future version of the file, `lavaan` could use full-information maximum likelihood through `missing = &quot;fiml&quot;` under the continuous-indicator model.
+
+## Verifying Q9r
+
+```{r}
+table(case31$q9, case31$q9_r, useNA = &quot;ifany&quot;)
+case31 |&gt;
+  summarise(
+    q9_min = min(q9, na.rm = TRUE),
+    q9_max = max(q9, na.rm = TRUE),
+    q9r_min = min(q9_r, na.rm = TRUE),
+    q9r_max = max(q9_r, na.rm = TRUE)
+  )</code></pre>
+<p>The cleaned data already contain <code>q9_r</code>, labeled
+<code>Q9r-Statements received - Frequency</code>. The observed mapping
+is consistent with the cleaned analysis variable: the original Q9 values
+3 and 4 are represented as Q9r values 2 and 1. I therefore use the
+existing <code>q9_r</code> variable and do <strong>not</strong>
+reverse-code it a second time. This decision is documented rather than
+silently applying another transformation.</p>
+<h2 id="aligning-item-direction">Aligning item direction</h2>
+<p>The raw coding directions are not identical. Q10 is coded so that 1
+means “Excellent” and 4 means “Poor”; Q11 uses 1 = “Yes” and 2 = “No”;
+and Q12 uses 1 = “Yes,” 2 = “No,” and 3 = “Uncertain.” To make larger
+values consistently represent more favorable operational evaluations, I
+use the existing <code>q10_r</code> and create explicit
+favorable-direction versions of Q11 and Q12.</p>
+<p>```{r} case31_cfa &lt;- case31 |&gt; mutate( q9r_final = q9_r,
+q10r_final = q10_r, q11r_final = 3 - q11, q12r_final = 4 - q12 )</p>
+<p>case31_cfa |&gt; select(q9, q9r_final, q10, q10r_final, q11,
+q11r_final, q12, q12r_final) |&gt; summary()</p>
+<pre><code>
+The recoding is auditable: Q9r and Q10r were already supplied in the cleaned data, while Q11r and Q12r are created with visible formulas. Q11r equals 2 for “Yes” and 1 for “No.” Q12r equals 3 for “Yes,” 2 for “Uncertain,” and 1 for “No.”
+
+# Hypothesized Two-Factor Measurement Model
+
+The two factors are expected to be related because members’ experiences with employees may influence their broader evaluation of credit-union operations. They are nevertheless specified as distinct factors because employee behavior and organizational operations are conceptually different domains.
+
+The model is identified by fixing the first loading of each factor to 1.0 in `lavaan` by default. Each factor has multiple indicators, and the two factors are allowed to correlate.
+
+```{r}
+measurement_model &lt;- &#39;
+  Employee_Proficiencies =~ q3 + q4 + q5 + q6
+  Operational_Effectiveness =~ q9r_final + q10r_final + q11r_final + q12r_final +
+    q31 + q32 + q33 + q34
+&#39;
+
+fit &lt;- cfa(
+  measurement_model,
+  data = case31_cfa,
+  estimator = &quot;ML&quot;,
+  missing = &quot;fiml&quot;,
+  std.lv = FALSE
+)
+
+summary(fit, fit.measures = TRUE, standardized = TRUE)</code></pre>
+<h1 id="cfa-results">CFA Results</h1>
+<h2 id="model-fit">Model fit</h2>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 40%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fit index</th>
+<th style="text-align: right;">Result</th>
+<th>General interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>χ²(53)</td>
+<td style="text-align: right;">126.85, <em>p</em> &lt; .001</td>
+<td>Exact-fit test rejects perfect fit.</td>
+</tr>
+<tr class="even">
+<td>CFI</td>
+<td style="text-align: right;">.818</td>
+<td>Below common approximate-fit benchmarks.</td>
+</tr>
+<tr class="odd">
+<td>TLI</td>
+<td style="text-align: right;">.774</td>
+<td>Below common approximate-fit benchmarks.</td>
+</tr>
+<tr class="even">
+<td>RMSEA</td>
+<td style="text-align: right;">.105</td>
+<td>Indicates poor approximate fit; 90% CI should be obtained from
+<code>lavaan</code>.</td>
+</tr>
+<tr class="odd">
+<td>SRMR</td>
+<td style="text-align: right;">.102</td>
+<td>Above commonly preferred values.</td>
+</tr>
+</tbody>
+</table>
+<p>The proposed two-factor model does not fit the data well. The
+chi-square test is significant, and the incremental fit indices are
+below common benchmarks such as .90 or .95. RMSEA is approximately .105
+and SRMR is approximately .102, both suggesting substantial residual
+misfit. These results mean that the one-factor specification for
+operational effectiveness should not be accepted automatically.</p>
+<p>Small numerical differences may occur when the code is re-rendered in
+a different R/lavaan version or with a robust estimator. The substantive
+conclusion is stable: the hypothesized model shows inadequate fit and
+requires measurement-model qualification.</p>
+<h2 id="standardized-factor-loadings">Standardized factor loadings</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Factor</th>
+<th>Indicator</th>
+<th style="text-align: right;">Std. loading</th>
+<th style="text-align: right;">Significance</th>
+<th>Assessment</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Employee Proficiencies</td>
+<td>Q3</td>
+<td style="text-align: right;">.737</td>
+<td style="text-align: right;">—</td>
+<td>Strong</td>
+</tr>
+<tr class="even">
+<td>Employee Proficiencies</td>
+<td>Q4</td>
+<td style="text-align: right;">.907</td>
+<td style="text-align: right;"><em>p</em> &lt; .001</td>
+<td>Strong</td>
+</tr>
+<tr class="odd">
+<td>Employee Proficiencies</td>
+<td>Q5</td>
+<td style="text-align: right;">.778</td>
+<td style="text-align: right;"><em>p</em> &lt; .001</td>
+<td>Strong</td>
+</tr>
+<tr class="even">
+<td>Employee Proficiencies</td>
+<td>Q6</td>
+<td style="text-align: right;">.753</td>
+<td style="text-align: right;"><em>p</em> &lt; .001</td>
+<td>Strong</td>
+</tr>
+<tr class="odd">
+<td>Operational Effectiveness</td>
+<td>Q9r</td>
+<td style="text-align: right;">.240</td>
+<td style="text-align: right;">—</td>
+<td>Very weak</td>
+</tr>
+<tr class="even">
+<td>Operational Effectiveness</td>
+<td>Q10r</td>
+<td style="text-align: right;">.431</td>
+<td style="text-align: right;"><em>p</em> = .042</td>
+<td>Weak</td>
+</tr>
+<tr class="odd">
+<td>Operational Effectiveness</td>
+<td>Q11r</td>
+<td style="text-align: right;">.306</td>
+<td style="text-align: right;"><em>p</em> = .068</td>
+<td>Very weak</td>
+</tr>
+<tr class="even">
+<td>Operational Effectiveness</td>
+<td>Q12r</td>
+<td style="text-align: right;">.299</td>
+<td style="text-align: right;"><em>p</em> = .071</td>
+<td>Very weak</td>
+</tr>
+<tr class="odd">
+<td>Operational Effectiveness</td>
+<td>Q31</td>
+<td style="text-align: right;">.313</td>
+<td style="text-align: right;"><em>p</em> = .066</td>
+<td>Very weak</td>
+</tr>
+<tr class="even">
+<td>Operational Effectiveness</td>
+<td>Q32</td>
+<td style="text-align: right;">.585</td>
+<td style="text-align: right;"><em>p</em> = .031</td>
+<td>Moderate</td>
+</tr>
+<tr class="odd">
+<td>Operational Effectiveness</td>
+<td>Q33</td>
+<td style="text-align: right;">.456</td>
+<td style="text-align: right;"><em>p</em> = .039</td>
+<td>Weak</td>
+</tr>
+<tr class="even">
+<td>Operational Effectiveness</td>
+<td>Q34</td>
+<td style="text-align: right;">.265</td>
+<td style="text-align: right;"><em>p</em> = .087</td>
+<td>Very weak</td>
+</tr>
+</tbody>
+</table>
+<p>The employee-proficiency indicators perform well: all standardized
+loadings are above .70, showing that Q3–Q6 share substantial variance
+with their intended factor. The operational-effectiveness indicators are
+much weaker. Only Q32 reaches the moderate range, while most of the
+other indicators fall below the commonly used .50 minimum guideline.
+This pattern suggests that the operational items do not behave as a
+coherent single construct in this sample.</p>
+<p><code>{r} standardizedSolution(fit) |&gt;   filter(op == &quot;=~&quot;) |&gt;   select(lhs, rhs, est.std, pvalue)</code></p>
+<h2 id="reliability-and-convergent-validity">Reliability and convergent
+validity</h2>
+<p>Using the standardized loadings, composite reliability (CR) and
+average variance extracted (AVE) are summarized below. These
+calculations are based on the usual congeneric-factor formulas and
+should be interpreted alongside the model-fit results.</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 28%" />
+<col style="width: 28%" />
+<col style="width: 21%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Factor</th>
+<th style="text-align: right;">Composite reliability</th>
+<th style="text-align: right;">AVE</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Employee Proficiencies</td>
+<td style="text-align: right;">.874</td>
+<td style="text-align: right;">.635</td>
+<td>Good internal consistency and convergent evidence</td>
+</tr>
+<tr class="even">
+<td>Operational Effectiveness</td>
+<td style="text-align: right;">.550</td>
+<td style="text-align: right;">.143</td>
+<td>Poor internal consistency and weak convergent evidence</td>
+</tr>
+</tbody>
+</table>
+<p>Employee proficiencies show strong reliability and convergent
+validity. The operational-effectiveness factor does not. Its low AVE
+means that the factor explains only a small proportion of the average
+variance in its indicators, and its CR is below common practical
+guidelines. The weak loadings and poor global fit reinforce the
+conclusion that the eight operational items should not automatically be
+averaged into one scale.</p>
+<p>```{r} std_loadings &lt;- standardizedSolution(fit) |&gt; filter(op
+== “=~”) |&gt; group_by(lhs) |&gt; summarise( CR = (sum(est.std)^2) /
+((sum(est.std)^2) + sum(1 - est.std^2)), AVE = mean(est.std^2), .groups
+= “drop” )</p>
+<p>std_loadings</p>
+<pre><code>
+## Discriminant validity
+
+The estimated latent-factor correlation is approximately .70. This indicates that members’ views of employee proficiencies and operational effectiveness are related, but the correlation is not so high that the constructs are automatically identical. However, discriminant validity cannot be declared solely from the factor correlation because the operational factor has poor convergent evidence and poor overall model fit.
+
+The strongest evidence for conceptual distinction is that Q3–Q6 form a strong, coherent employee-proficiency cluster, while the operational indicators are heterogeneous. The more important limitation is that the operational factor itself is not measured consistently enough to support a confident discriminant-validity claim. A future analysis should compare theoretically justified alternatives, such as separate operational subdimensions, rather than adding correlated errors only to improve fit.
+
+```{r}
+lavInspect(fit, &quot;cor.lv&quot;)
+modindices(fit, sort. = TRUE, minimum.value = 10) |&gt;
+  head(10)</code></pre>
+<p>Modification indices may be used diagnostically, but I do not add
+correlated errors or delete items in the primary model. Any alternative
+model would need a substantive explanation based on the questionnaire
+and would have to be labeled and compared with the original model.</p>
+<h1 id="interpretation-and-conclusion">Interpretation and
+Conclusion</h1>
+<p>The two-factor CFA provides strong evidence for the
+employee-proficiency construct. Q3–Q6 have strong standardized loadings,
+good composite reliability, and acceptable average variance extracted.
+These items can reasonably be treated as a latent employee-proficiency
+measure in a subsequent model.</p>
+<p>The evidence for the operational-effectiveness construct is
+substantially weaker. The one-factor model fits poorly, most operational
+indicators have weak loadings, and CR and AVE are low. The operational
+items cover several different experiences—statement frequency, statement
+quality, confidentiality, processing speed, service adequacy, and
+application simplicity—which may not represent one unidimensional
+factor. The result is therefore a measurement concern rather than
+evidence that the credit union’s operations are objectively poor.</p>
+<p>Before testing structural hypotheses, I would retain the
+employee-proficiency factor but investigate the operational indicators
+further. The next step could be to review the Case 31 measurement table
+and theory, test theoretically justified subdimensions, or analyze
+operational items separately. I would not use the current eight-item
+operational factor as an unquestioned composite or interpret the CFA as
+a causal test.</p>
+<h1 id="references">References</h1>
+<p>Byrne, B. M. (2016). <em>Structural equation modeling with AMOS:
+Basic concepts, applications, and programming</em> (3rd ed.).
+Routledge.</p>
+<p>Hair, J. F., Black, W. C., Babin, B. J., &amp; Anderson, R. E.
+(2019). <em>Multivariate data analysis</em> (8th ed.). Cengage.</p>
+<p>Rosseel, Y. (2012). lavaan: An R package for structural equation
+modeling. <em>Journal of Statistical Software, 48</em>(2), 1–36.
+https://doi.org/10.18637/jss.v048.i02</p>
+<h1 id="appendix-reproducibility-and-publication-links">Appendix:
+Reproducibility and Publication Links</h1>
+<ul>
+<li><strong>GitHub repository:</strong> <a href="https://github.com/Min-woo0210/IBM6500-2-">Open the GitHub
+repository</a></li>
+<li><strong>GitHub Pages:</strong> <a href="https://min-woo0210.github.io/IBM6500-2-/M13-Case31-Measurement-Model-Assessment/">Open
+the published GitHub Pages report</a></li>
+<li><strong>Final source file:</strong>
+<code>M13-Case31-Measurement-Model-Assessment.qmd</code></li>
+<li><strong>Rendered report:</strong>
+<code>M13-Case31-Measurement-Model-Assessment.html</code></li>
+</ul>
+<p>The report was checked for readable tables, working hyperlinks, and a
+complete Appendix. The GitHub repository and GitHub Pages links are
+included for the final publication workflow.</p>
+</body>
+</html>

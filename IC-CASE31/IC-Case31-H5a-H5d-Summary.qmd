@@ -1,0 +1,163 @@
+---
+title: "IC Case 31: Summary of Data Analysis"
+subtitle: "Hypotheses H5a–H5d"
+author: "Jungmin Woo"
+date: "2026-11-20"
+format:
+  html:
+    toc: true
+    embed-resources: true
+    css: styles.css
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# IC Case 31: H5a–H5d
+
+## Summary of Data Analysis
+
+This report examines four hypotheses about members’ evaluations of the Employees Federal Credit Union’s operational efficiency. The cleaned Case 31 data file contains 128 cases. The analysis uses the overall operational-attitude measure, Q37r, as the dependent variable and Q31–Q34 as simultaneous predictors.
+
+::: {.callout-note}
+The four hypotheses share the same dependent variable. Therefore, one multiple regression model is appropriate because it estimates the unique contribution of each operational-efficiency perception while holding the other perceptions constant.
+:::
+
+# Data and analysis plan
+
+## Variables
+
+| Role | Variable | Measure |
+|---|---|---|
+| Dependent variable | Q37r | Overall rating of credit-union management and operations |
+| Predictor for H5a | Q31 | Credit-union personnel keep financial information confidential |
+| Predictor for H5b | Q32 | Credit union is prompt in processing loan applications |
+| Predictor for H5c | Q33 | Credit union’s financial services meet members’ needs |
+| Predictor for H5d | Q34 | Credit-union loan applications are simple and easy to complete |
+
+All variables are measured on five-point agreement/rating scales, with higher values representing more favorable evaluations. The regression uses complete observations for Q31–Q34 and Q37r, resulting in *N* = 121 cases.
+
+## Why multiple regression is appropriate
+
+H5a–H5d have one common dependent variable and four related independent variables. Running one multiple regression avoids conducting four separate tests that would ignore overlap among the predictors. The model estimates the effect of each predictor on overall operational attitude after statistically controlling for the other three predictors.
+
+```{r}
+library(haven)
+library(dplyr)
+library(broom)
+
+case31 <- read_sav("Case 31 Data_efcu_4.sav")
+
+h5 <- case31 |>
+  transmute(
+    overall_operations = Q37_r,
+    confidentiality = q31,
+    prompt_processing = q32,
+    services_meet_needs = q33,
+    easy_loan_application = q34
+  ) |>
+  na.omit()
+
+h5_model <- lm(
+  overall_operations ~ confidentiality + prompt_processing +
+    services_meet_needs + easy_loan_application,
+  data = h5
+)
+
+summary(h5_model)
+tidy(h5_model, conf.int = TRUE)
+glance(h5_model)
+```
+
+# Descriptive results
+
+| Measure | *N* | Mean | SD |
+|---|---:|---:|---:|
+| Overall operational attitude (Q37r) | 121 | 4.07 | 0.73 |
+| Q31: Confidentiality | 121 | 3.93 | 0.68 |
+| Q32: Prompt processing | 121 | 3.74 | 0.80 |
+| Q33: Services meet needs | 121 | 3.62 | 0.67 |
+| Q34: Easy loan application | 121 | 3.47 | 0.79 |
+
+Members gave the most favorable predictor rating to confidentiality and the least favorable rating to the simplicity of loan applications. The overall operational-attitude rating was positive, but the lower mean for Q34 suggests that application simplicity may be a practical concern even before considering the regression results.
+
+# Multiple regression results
+
+## Model summary
+
+The overall regression model was statistically significant, *F*(4, 116) = 12.46, *p* < .001. The model explained approximately 30.1% of the variance in overall operational attitude (*R*² = .301; adjusted *R*² = .276). Thus, the four operational perceptions jointly provide meaningful information about members’ overall evaluation of credit-union operations.
+
+| Predictor | B | SE | Standardized β | *t* | *p* | Decision |
+|---|---:|---:|---:|---:|---:|---|
+| Intercept | 1.347 | 0.480 | — | 2.806 | .006 | — |
+| Q31: Confidentiality | 0.188 | 0.089 | .176 | 2.116 | .036 | H5a supported |
+| Q32: Prompt processing | 0.308 | 0.083 | .340 | 3.709 | < .001 | H5b supported |
+| Q33: Services meet needs | 0.294 | 0.086 | .273 | 3.401 | < .001 | H5c supported |
+| Q34: Easy loan application | −0.068 | 0.079 | −.074 | −0.863 | .390 | H5d not supported |
+
+```{r}
+summary(h5_model)
+tidy(h5_model, conf.int = TRUE) |>
+  mutate(across(where(is.numeric), ~round(.x, 3)))
+```
+
+# H5a: Confidentiality
+
+**H5a:** Members’ perceptions that credit-union personnel keep financial information confidential are positively related to their overall attitude toward operational efficiency.
+
+Q31 was a significant positive predictor of Q37r, *B* = 0.188, β = .176, *t* = 2.12, *p* = .036. Holding prompt processing, meeting members’ needs, and loan-application simplicity constant, a one-point increase in the confidentiality rating was associated with an estimated 0.188-point increase in overall operational attitude.
+
+**Conclusion:** H5a is supported. Confidentiality contributes uniquely to members’ overall evaluation of operations, although its standardized effect was smaller than the effects of prompt processing and meeting members’ needs.
+
+# H5b: Prompt processing
+
+**H5b:** Members’ perceptions that the credit union processes loan applications promptly are positively related to their overall attitude toward operational efficiency.
+
+Q32 was a significant positive predictor, *B* = 0.308, β = .340, *t* = 3.71, *p* < .001. This was the strongest standardized predictor in the model. Members who viewed loan processing as more prompt tended to give more favorable overall operational ratings, even after controlling for the other three predictors.
+
+**Conclusion:** H5b is supported. Improving processing speed and communicating realistic processing timelines may have an important relationship with members’ overall operational evaluations.
+
+# H5c: Meeting members’ needs
+
+**H5c:** Members’ perceptions that the credit union’s financial services meet their needs are positively related to their overall attitude toward operational efficiency.
+
+Q33 was a significant positive predictor, *B* = 0.294, β = .273, *t* = 3.40, *p* < .001. Members who believed that the services met their needs also tended to rate the credit union’s overall operations more favorably, controlling for confidentiality, processing promptness, and application simplicity.
+
+**Conclusion:** H5c is supported. Maintaining service relevance and improving the fit between members’ needs and available financial services should be an important operational priority.
+
+# H5d: Simplicity of loan applications
+
+**H5d:** Members’ perceptions that loan applications are simple and easy to complete are positively related to their overall attitude toward operational efficiency.
+
+Q34 was not a statistically significant predictor of Q37r, *B* = −0.068, β = −.074, *t* = −0.86, *p* = .390. The coefficient was small and slightly negative after the other operational perceptions were controlled. This does not mean that application simplicity is unimportant to members; rather, Q34 did not explain unique variation in the overall rating in this particular model.
+
+**Conclusion:** H5d is not supported. The result should be interpreted alongside the relatively low descriptive mean for Q34, which still suggests that simplifying loan applications may be useful from a service-improvement perspective.
+
+# Overall interpretation
+
+| Hypothesis | Result | Interpretation |
+|---|---|---|
+| H5a | Supported | Confidentiality was a significant positive predictor. |
+| H5b | Supported | Prompt loan processing was the strongest predictor. |
+| H5c | Supported | Meeting members’ needs was a significant positive predictor. |
+| H5d | Not supported | Application simplicity was not a unique predictor after controls. |
+
+The analysis indicates that members’ overall attitude toward operational efficiency is most closely related to prompt loan processing and the extent to which services meet members’ needs. Confidentiality also makes a significant positive contribution. Although application simplicity was not significant in the multivariable model, its lower mean indicates that it remains a reasonable operational improvement area. Because the data are observational and cross-sectional, these results identify associations rather than proving that changing one operational feature will cause overall attitudes to improve.
+
+# Appendix: submission links
+
+## GitHub Pages
+
+[Open the published GitHub Pages website](https://min-woo0210.github.io/IBM6500-2-/IC-Case31-H5a-H5d-Summary/)
+
+## GitHub repository
+
+[Open the GitHub repository](https://github.com/Min-woo0210/IBM6500-2-)
+
+## Files used
+
+- `IC-Case31-H5a-H5d-Summary.qmd`
+- `IC-Case31-H5a-H5d-Summary.html`
+- `styles.css`
+- `Case 31 Data_efcu_4.sav`

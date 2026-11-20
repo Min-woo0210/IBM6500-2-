@@ -1,0 +1,160 @@
+---
+title: "M12: Article on Common Method Bias"
+subtitle: "Summary of Podsakoff, MacKenzie, and Podsakoff (2012)"
+author: "Jungmin Woo"
+date: "2026-11-20"
+format:
+  html:
+    toc: true
+    embed-resources: true
+    css: styles.css
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Article information
+
+Podsakoff, P. M., MacKenzie, S. B., & Podsakoff, N. P. (2012). *Sources of method bias in social science research and recommendations on how to control it.* **Annual Review of Psychology, 63**, 539–569. [https://doi.org/10.1146/annurev-psych-120710-100452](https://doi.org/10.1146/annurev-psych-120710-100452)
+
+This article is a review of how measurement methods can systematically influence observed scores and relationships among constructs in behavioral and social-science research. The authors discuss both the evidence that method bias matters and the procedural and statistical strategies researchers can use to reduce it.
+
+# Purpose and central argument
+
+The authors begin with an important distinction: observed scores may contain variance that comes from the construct a researcher intends to measure and variance that comes from the measurement method. Method bias becomes a validity problem when systematic method-related variance contaminates individual measures or changes the observed relationships among constructs.
+
+The central argument is not that every study using a common method is invalid. Instead, the authors argue that method bias is a plausible rival explanation that should be evaluated and reduced whenever possible. The appropriate remedy depends on the likely source of the bias, the research design, and the feasibility of collecting better data. There is no single universally best statistical test or procedural solution.
+
+# What is method bias?
+
+## Meaning of “method”
+
+The article uses a broad definition of method. Method can include item content and wording, response format, instructions, the testing situation, characteristics of the rater, the reason for taking the survey, and the context in which questions appear. Two measures can therefore share method features even when they are intended to represent different theoretical constructs.
+
+## Common method variance and common method bias
+
+Common method variance is the portion of variance attributable to a measurement method shared by multiple measures. Common method bias refers to the systematic distortion that can result from that shared method variance. The distortion can inflate relationships, but it can also reduce or deflate them. Therefore, researchers should not automatically assume that a common method always produces larger correlations.
+
+The authors also emphasize that method effects do not necessarily influence every item or construct equally. Treating method effects as identical across all measures can lead to overcorrection for some variables and undercorrection for others.
+
+# Main sources of method bias
+
+| Source | How it can affect responses |
+|---|---|
+| Common rater/source | One respondent’s mood, implicit theories, consistency motives, or social-desirability concerns can affect both predictor and criterion measures. |
+| Item wording | Ambiguous, complex, double-barreled, negatively worded, or socially desirable items can produce systematic response patterns. |
+| Scale properties | Shared scale formats, number of response points, anchor labels, or polarity can make measures appear more similar than their content warrants. |
+| Item context and order | Earlier questions can create retrieval cues, contrast effects, consistency pressure, or a positive/negative context for later questions. |
+| Response styles | Acquiescence, disacquiescence, extreme responding, midpoint responding, and careless responding can affect scores independent of construct content. |
+| Social desirability | Respondents may edit answers to present themselves or their organization in a socially acceptable way. |
+| Satisficing | When tasks are difficult or respondents are unmotivated, they may reduce cognitive effort and choose convenient rather than fully considered answers. |
+
+# Evidence that method bias matters
+
+The review reports evidence from multitrait–multimethod studies and meta-analyses showing that method factors can account for a meaningful portion of item variance. Across the reviewed evidence, approximately 18%–32% of total item variance was attributed to method factors in several multitrait–multimethod analyses.
+
+The article also summarizes evidence that relationships between constructs can be substantially different when predictor and criterion measures come from the same source rather than different sources. For example, one summarized comparison found that the average corrected correlation decreased from about .359 when measures came from the same source to about .184 when they came from different sources. The authors use such findings to show why a strong observed correlation should not automatically be interpreted as strong evidence of a substantive relationship.
+
+The evidence also suggests that method bias is not uniform. The amount of method variance can differ across constructs, items, wording styles, and measurement contexts. This is why a single blanket correction may be inappropriate.
+
+# Procedural remedies
+
+Procedural remedies are implemented during study design and data collection, before statistical analysis.
+
+## Use different sources when appropriate
+
+Researchers can obtain predictor and criterion measures from different respondents or combine a self-report measure with archival or objective data. This can reduce biases caused by a common rater’s mood, implicit theory, consistency motive, or social-desirability tendency. However, the approach is not always appropriate: if both variables are perceptions or feelings that only the focal person can validly report, using another rater may create a different validity problem.
+
+## Separate predictor and criterion measures
+
+The authors discuss three types of separation:
+
+- **Temporal separation:** collect the measures at different times.
+- **Proximal separation:** place measures apart in the questionnaire, using other constructs or buffer items between them.
+- **Psychological separation:** reduce the salience of the relationship between measures, such as by using a credible cover story or embedding measures in a broader questionnaire.
+
+Separation can reduce respondents’ ability or motivation to use earlier answers to guide later answers. However, temporal separation can create attrition and allow real changes or outside events to influence the criterion. Proximal separation can lengthen a questionnaire and increase fatigue. Psychological separation must be credible and should be pretested.
+
+## Improve questionnaire construction
+
+The article recommends using clear, specific, concise items; defining unfamiliar terms; avoiding double-barreled questions and double negatives; avoiding vague concepts unless examples are provided; and labeling response-scale points clearly. These steps reduce ambiguity and make it less likely that respondents will rely on response styles instead of item content.
+
+Researchers can also reduce shared scale properties when doing so does not damage content validity. For example, varying formats or labels may reduce automatic consistency, but preserving the intended meaning of the construct remains more important than mechanically changing every scale.
+
+## Reduce social desirability and acquiescence
+
+Items can be reviewed for social desirability and revised when their wording pressures respondents toward socially acceptable answers. Balanced positive and negative wording can provide some protection against acquiescence, although reverse-worded items can introduce their own wording and comprehension problems. The authors therefore treat balancing as a possible tool, not a universal solution.
+
+# Statistical remedies
+
+Statistical remedies are useful when procedural controls were not possible or did not fully address the concern. They should be selected based on a theory of the likely method source.
+
+| Statistical approach | Main idea | Important limitation |
+|---|---|---|
+| Unmeasured latent method factor | Add a latent method factor to indicators that share a measurement method. | The factor may absorb substantive variance or other unmodeled relationships, and model identification can be difficult. |
+| Correlation-based marker variable | Use a theoretically unrelated marker variable to estimate and adjust for method effects. | A weak or inappropriate marker may not share the relevant method characteristics; the approach can ignore measurement error and assumes a common effect. |
+| Regression-based marker variable | Add marker variables to a regression model that may be affected by method bias. | It controls only method effects shared with the marker and is mainly suited to single-equation models. |
+| Instrumental-variable technique | Use exogenous instruments and two-stage least squares when method bias creates endogeneity. | Good instruments must be strongly related to the predictor and unrelated to the structural error; valid instruments are difficult to identify. |
+| CFA marker technique | Use marker indicators and compare constrained/unconstrained latent method-factor models. | It is more demanding, depends on the marker variables, and does not necessarily identify the substantive nature of the bias. |
+| Directly measured latent method factor | Measure a suspected contaminating source, such as social desirability or affectivity, and model it directly. | The researcher must anticipate the source and include valid measures of it. |
+| Measured response-style technique | Measure acquiescence, disacquiescence, extreme, and midpoint responding using heterogeneous buffer items. | It requires additional items and only controls the response styles that are explicitly measured. |
+
+The article’s broader point is that post hoc statistical corrections should not replace thoughtful study design. Statistical remedies can be valuable, but each rests on assumptions that must be explained and evaluated.
+
+# When is method bias most likely to be a problem?
+
+The authors argue that method bias is more likely when respondents have limited ability or motivation to provide optimal answers. Difficult, abstract, ambiguous, or lengthy tasks increase cognitive demands. Low topic familiarity, fatigue, low verbal ability, and low education can also make nondifferentiated or stylistic responding more likely.
+
+Motivational conditions matter as well. Social consequences, threats to self-esteem, concerns about confidentiality, or incentives to create a favorable impression can increase socially desirable responding. Respondents may also use consistency with an implicit theory when they believe that two constructs should be related.
+
+Researchers should therefore consider three questions before collecting data:
+
+1. Can respondents accurately answer the questions?
+2. Are respondents motivated to answer carefully and honestly?
+3. Does the questionnaire task make stylistic or satisficing responses easy?
+
+# Practical recommendations for survey research
+
+The authors recommend combining multiple protections rather than relying on one diagnostic test. A strong survey design should:
+
+- collect predictor and criterion information from different sources when the constructs permit it;
+- separate predictor and criterion sections when appropriate;
+- make participation and confidentiality clear;
+- use simple, unambiguous, non-double-barreled wording;
+- avoid unnecessary similarity in scale formats and labels;
+- pretest the survey with respondents similar to the target sample;
+- reduce fatigue and avoid overly long questionnaires;
+- include theoretically justified marker or response-style measures when needed; and
+- report the design choices and the limitations of any statistical control.
+
+# Application to my research projects
+
+This article is especially relevant to survey-based research such as the Case 31 credit-union study and the social-media opinion-leader project. In both settings, respondents may provide predictor and outcome ratings in one questionnaire, using similar Likert scales. That design creates a possibility that correlations reflect shared response tendencies, question context, or social desirability in addition to the substantive constructs.
+
+For a future survey, I would separate conceptually related predictor and outcome sections, make the purpose and confidentiality protections clear, pretest item wording, and avoid double-barreled questions. If the research question allows it, I would combine self-report responses with behavioral or archival indicators. I would also avoid claiming that a single statistical test, such as a common-method-factor or marker-variable test, proves that method bias is absent. The most defensible approach is to reduce the threat during design and then use statistical sensitivity checks that match the suspected source of bias.
+
+# Key takeaways
+
+1. Method bias is systematic measurement error, not merely random noise.
+2. Common method variance can affect both individual measures and relationships among constructs.
+3. Method effects may inflate or deflate relationships and may affect measures unequally.
+4. Procedural remedies should be planned before data collection whenever possible.
+5. Statistical remedies are useful but depend on assumptions about the source and structure of the bias.
+6. There is no single best remedy; the choice should fit the research question, constructs, and feasible data-collection design.
+
+# Appendix: submission links
+
+## GitHub Pages
+
+[Open the published GitHub Pages website](https://min-woo0210.github.io/IBM6500-2-/M12-Article-Common-Method-Bias/)
+
+## GitHub repository
+
+[Open the GitHub repository](https://github.com/Min-woo0210/IBM6500-2-)
+
+## Article source
+
+[Annual Review of Psychology article](https://doi.org/10.1146/annurev-psych-120710-100452)
+
+[PubMed record](https://pubmed.ncbi.nlm.nih.gov/21838546/)

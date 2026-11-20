@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Jungmin Woo" />
+  <meta name="dcterms.date" content="2026-11-20" />
+  <title>M12: Article on Common Method Bias</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">body { font-family: Georgia, serif; line-height: 1.55; max-width: 1050px; margin: 0 auto; padding: 2rem; color: #222; }
+h1, h2, h3 { color: #17365d; }
+table { border-collapse: collapse; width: 100%; margin: 1rem 0 1.5rem; }
+th, td { border: 1px solid #c9d3df; padding: .45rem .6rem; }
+th { background: #eaf1f8; }
+pre { background: #f5f5f5; border: 1px solid #ddd; padding: 1rem; overflow-x: auto; }
+.callout-note { background: #eef6ff; border-left: 5px solid #2f75b5; padding: 1rem; margin: 1rem 0; }
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">M12: Article on Common Method Bias</h1>
+<p class="subtitle">Summary of Podsakoff, MacKenzie, and Podsakoff
+(2012)</p>
+<p class="author">Jungmin Woo</p>
+<p class="date">2026-11-20</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#article-information" id="toc-article-information">Article
+information</a></li>
+<li><a href="#purpose-and-central-argument" id="toc-purpose-and-central-argument">Purpose and central
+argument</a></li>
+<li><a href="#what-is-method-bias" id="toc-what-is-method-bias">What is
+method bias?</a>
+<ul>
+<li><a href="#meaning-of-method" id="toc-meaning-of-method">Meaning of
+“method”</a></li>
+<li><a href="#common-method-variance-and-common-method-bias" id="toc-common-method-variance-and-common-method-bias">Common method
+variance and common method bias</a></li>
+</ul></li>
+<li><a href="#main-sources-of-method-bias" id="toc-main-sources-of-method-bias">Main sources of method
+bias</a></li>
+<li><a href="#evidence-that-method-bias-matters" id="toc-evidence-that-method-bias-matters">Evidence that method bias
+matters</a></li>
+<li><a href="#procedural-remedies" id="toc-procedural-remedies">Procedural remedies</a>
+<ul>
+<li><a href="#use-different-sources-when-appropriate" id="toc-use-different-sources-when-appropriate">Use different sources
+when appropriate</a></li>
+<li><a href="#separate-predictor-and-criterion-measures" id="toc-separate-predictor-and-criterion-measures">Separate predictor
+and criterion measures</a></li>
+<li><a href="#improve-questionnaire-construction" id="toc-improve-questionnaire-construction">Improve questionnaire
+construction</a></li>
+<li><a href="#reduce-social-desirability-and-acquiescence" id="toc-reduce-social-desirability-and-acquiescence">Reduce social
+desirability and acquiescence</a></li>
+</ul></li>
+<li><a href="#statistical-remedies" id="toc-statistical-remedies">Statistical remedies</a></li>
+<li><a href="#when-is-method-bias-most-likely-to-be-a-problem" id="toc-when-is-method-bias-most-likely-to-be-a-problem">When is method
+bias most likely to be a problem?</a></li>
+<li><a href="#practical-recommendations-for-survey-research" id="toc-practical-recommendations-for-survey-research">Practical
+recommendations for survey research</a></li>
+<li><a href="#application-to-my-research-projects" id="toc-application-to-my-research-projects">Application to my research
+projects</a></li>
+<li><a href="#key-takeaways" id="toc-key-takeaways">Key
+takeaways</a></li>
+<li><a href="#appendix-submission-links" id="toc-appendix-submission-links">Appendix: submission links</a>
+<ul>
+<li><a href="#github-pages" id="toc-github-pages">GitHub Pages</a></li>
+<li><a href="#github-repository" id="toc-github-repository">GitHub
+repository</a></li>
+<li><a href="#article-source" id="toc-article-source">Article
+source</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="article-information">Article information</h1>
+<p>Podsakoff, P. M., MacKenzie, S. B., &amp; Podsakoff, N. P. (2012).
+<em>Sources of method bias in social science research and
+recommendations on how to control it.</em> <strong>Annual Review of
+Psychology, 63</strong>, 539–569. <a href="https://doi.org/10.1146/annurev-psych-120710-100452">https://doi.org/10.1146/annurev-psych-120710-100452</a></p>
+<p>This article is a review of how measurement methods can
+systematically influence observed scores and relationships among
+constructs in behavioral and social-science research. The authors
+discuss both the evidence that method bias matters and the procedural
+and statistical strategies researchers can use to reduce it.</p>
+<h1 id="purpose-and-central-argument">Purpose and central argument</h1>
+<p>The authors begin with an important distinction: observed scores may
+contain variance that comes from the construct a researcher intends to
+measure and variance that comes from the measurement method. Method bias
+becomes a validity problem when systematic method-related variance
+contaminates individual measures or changes the observed relationships
+among constructs.</p>
+<p>The central argument is not that every study using a common method is
+invalid. Instead, the authors argue that method bias is a plausible
+rival explanation that should be evaluated and reduced whenever
+possible. The appropriate remedy depends on the likely source of the
+bias, the research design, and the feasibility of collecting better
+data. There is no single universally best statistical test or procedural
+solution.</p>
+<h1 id="what-is-method-bias">What is method bias?</h1>
+<h2 id="meaning-of-method">Meaning of “method”</h2>
+<p>The article uses a broad definition of method. Method can include
+item content and wording, response format, instructions, the testing
+situation, characteristics of the rater, the reason for taking the
+survey, and the context in which questions appear. Two measures can
+therefore share method features even when they are intended to represent
+different theoretical constructs.</p>
+<h2 id="common-method-variance-and-common-method-bias">Common method
+variance and common method bias</h2>
+<p>Common method variance is the portion of variance attributable to a
+measurement method shared by multiple measures. Common method bias
+refers to the systematic distortion that can result from that shared
+method variance. The distortion can inflate relationships, but it can
+also reduce or deflate them. Therefore, researchers should not
+automatically assume that a common method always produces larger
+correlations.</p>
+<p>The authors also emphasize that method effects do not necessarily
+influence every item or construct equally. Treating method effects as
+identical across all measures can lead to overcorrection for some
+variables and undercorrection for others.</p>
+<h1 id="main-sources-of-method-bias">Main sources of method bias</h1>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source</th>
+<th>How it can affect responses</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Common rater/source</td>
+<td>One respondent’s mood, implicit theories, consistency motives, or
+social-desirability concerns can affect both predictor and criterion
+measures.</td>
+</tr>
+<tr class="even">
+<td>Item wording</td>
+<td>Ambiguous, complex, double-barreled, negatively worded, or socially
+desirable items can produce systematic response patterns.</td>
+</tr>
+<tr class="odd">
+<td>Scale properties</td>
+<td>Shared scale formats, number of response points, anchor labels, or
+polarity can make measures appear more similar than their content
+warrants.</td>
+</tr>
+<tr class="even">
+<td>Item context and order</td>
+<td>Earlier questions can create retrieval cues, contrast effects,
+consistency pressure, or a positive/negative context for later
+questions.</td>
+</tr>
+<tr class="odd">
+<td>Response styles</td>
+<td>Acquiescence, disacquiescence, extreme responding, midpoint
+responding, and careless responding can affect scores independent of
+construct content.</td>
+</tr>
+<tr class="even">
+<td>Social desirability</td>
+<td>Respondents may edit answers to present themselves or their
+organization in a socially acceptable way.</td>
+</tr>
+<tr class="odd">
+<td>Satisficing</td>
+<td>When tasks are difficult or respondents are unmotivated, they may
+reduce cognitive effort and choose convenient rather than fully
+considered answers.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="evidence-that-method-bias-matters">Evidence that method bias
+matters</h1>
+<p>The review reports evidence from multitrait–multimethod studies and
+meta-analyses showing that method factors can account for a meaningful
+portion of item variance. Across the reviewed evidence, approximately
+18%–32% of total item variance was attributed to method factors in
+several multitrait–multimethod analyses.</p>
+<p>The article also summarizes evidence that relationships between
+constructs can be substantially different when predictor and criterion
+measures come from the same source rather than different sources. For
+example, one summarized comparison found that the average corrected
+correlation decreased from about .359 when measures came from the same
+source to about .184 when they came from different sources. The authors
+use such findings to show why a strong observed correlation should not
+automatically be interpreted as strong evidence of a substantive
+relationship.</p>
+<p>The evidence also suggests that method bias is not uniform. The
+amount of method variance can differ across constructs, items, wording
+styles, and measurement contexts. This is why a single blanket
+correction may be inappropriate.</p>
+<h1 id="procedural-remedies">Procedural remedies</h1>
+<p>Procedural remedies are implemented during study design and data
+collection, before statistical analysis.</p>
+<h2 id="use-different-sources-when-appropriate">Use different sources
+when appropriate</h2>
+<p>Researchers can obtain predictor and criterion measures from
+different respondents or combine a self-report measure with archival or
+objective data. This can reduce biases caused by a common rater’s mood,
+implicit theory, consistency motive, or social-desirability tendency.
+However, the approach is not always appropriate: if both variables are
+perceptions or feelings that only the focal person can validly report,
+using another rater may create a different validity problem.</p>
+<h2 id="separate-predictor-and-criterion-measures">Separate predictor
+and criterion measures</h2>
+<p>The authors discuss three types of separation:</p>
+<ul>
+<li><strong>Temporal separation:</strong> collect the measures at
+different times.</li>
+<li><strong>Proximal separation:</strong> place measures apart in the
+questionnaire, using other constructs or buffer items between them.</li>
+<li><strong>Psychological separation:</strong> reduce the salience of
+the relationship between measures, such as by using a credible cover
+story or embedding measures in a broader questionnaire.</li>
+</ul>
+<p>Separation can reduce respondents’ ability or motivation to use
+earlier answers to guide later answers. However, temporal separation can
+create attrition and allow real changes or outside events to influence
+the criterion. Proximal separation can lengthen a questionnaire and
+increase fatigue. Psychological separation must be credible and should
+be pretested.</p>
+<h2 id="improve-questionnaire-construction">Improve questionnaire
+construction</h2>
+<p>The article recommends using clear, specific, concise items; defining
+unfamiliar terms; avoiding double-barreled questions and double
+negatives; avoiding vague concepts unless examples are provided; and
+labeling response-scale points clearly. These steps reduce ambiguity and
+make it less likely that respondents will rely on response styles
+instead of item content.</p>
+<p>Researchers can also reduce shared scale properties when doing so
+does not damage content validity. For example, varying formats or labels
+may reduce automatic consistency, but preserving the intended meaning of
+the construct remains more important than mechanically changing every
+scale.</p>
+<h2 id="reduce-social-desirability-and-acquiescence">Reduce social
+desirability and acquiescence</h2>
+<p>Items can be reviewed for social desirability and revised when their
+wording pressures respondents toward socially acceptable answers.
+Balanced positive and negative wording can provide some protection
+against acquiescence, although reverse-worded items can introduce their
+own wording and comprehension problems. The authors therefore treat
+balancing as a possible tool, not a universal solution.</p>
+<h1 id="statistical-remedies">Statistical remedies</h1>
+<p>Statistical remedies are useful when procedural controls were not
+possible or did not fully address the concern. They should be selected
+based on a theory of the likely method source.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Statistical approach</th>
+<th>Main idea</th>
+<th>Important limitation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Unmeasured latent method factor</td>
+<td>Add a latent method factor to indicators that share a measurement
+method.</td>
+<td>The factor may absorb substantive variance or other unmodeled
+relationships, and model identification can be difficult.</td>
+</tr>
+<tr class="even">
+<td>Correlation-based marker variable</td>
+<td>Use a theoretically unrelated marker variable to estimate and adjust
+for method effects.</td>
+<td>A weak or inappropriate marker may not share the relevant method
+characteristics; the approach can ignore measurement error and assumes a
+common effect.</td>
+</tr>
+<tr class="odd">
+<td>Regression-based marker variable</td>
+<td>Add marker variables to a regression model that may be affected by
+method bias.</td>
+<td>It controls only method effects shared with the marker and is mainly
+suited to single-equation models.</td>
+</tr>
+<tr class="even">
+<td>Instrumental-variable technique</td>
+<td>Use exogenous instruments and two-stage least squares when method
+bias creates endogeneity.</td>
+<td>Good instruments must be strongly related to the predictor and
+unrelated to the structural error; valid instruments are difficult to
+identify.</td>
+</tr>
+<tr class="odd">
+<td>CFA marker technique</td>
+<td>Use marker indicators and compare constrained/unconstrained latent
+method-factor models.</td>
+<td>It is more demanding, depends on the marker variables, and does not
+necessarily identify the substantive nature of the bias.</td>
+</tr>
+<tr class="even">
+<td>Directly measured latent method factor</td>
+<td>Measure a suspected contaminating source, such as social
+desirability or affectivity, and model it directly.</td>
+<td>The researcher must anticipate the source and include valid measures
+of it.</td>
+</tr>
+<tr class="odd">
+<td>Measured response-style technique</td>
+<td>Measure acquiescence, disacquiescence, extreme, and midpoint
+responding using heterogeneous buffer items.</td>
+<td>It requires additional items and only controls the response styles
+that are explicitly measured.</td>
+</tr>
+</tbody>
+</table>
+<p>The article’s broader point is that post hoc statistical corrections
+should not replace thoughtful study design. Statistical remedies can be
+valuable, but each rests on assumptions that must be explained and
+evaluated.</p>
+<h1 id="when-is-method-bias-most-likely-to-be-a-problem">When is method
+bias most likely to be a problem?</h1>
+<p>The authors argue that method bias is more likely when respondents
+have limited ability or motivation to provide optimal answers.
+Difficult, abstract, ambiguous, or lengthy tasks increase cognitive
+demands. Low topic familiarity, fatigue, low verbal ability, and low
+education can also make nondifferentiated or stylistic responding more
+likely.</p>
+<p>Motivational conditions matter as well. Social consequences, threats
+to self-esteem, concerns about confidentiality, or incentives to create
+a favorable impression can increase socially desirable responding.
+Respondents may also use consistency with an implicit theory when they
+believe that two constructs should be related.</p>
+<p>Researchers should therefore consider three questions before
+collecting data:</p>
+<ol type="1">
+<li>Can respondents accurately answer the questions?</li>
+<li>Are respondents motivated to answer carefully and honestly?</li>
+<li>Does the questionnaire task make stylistic or satisficing responses
+easy?</li>
+</ol>
+<h1 id="practical-recommendations-for-survey-research">Practical
+recommendations for survey research</h1>
+<p>The authors recommend combining multiple protections rather than
+relying on one diagnostic test. A strong survey design should:</p>
+<ul>
+<li>collect predictor and criterion information from different sources
+when the constructs permit it;</li>
+<li>separate predictor and criterion sections when appropriate;</li>
+<li>make participation and confidentiality clear;</li>
+<li>use simple, unambiguous, non-double-barreled wording;</li>
+<li>avoid unnecessary similarity in scale formats and labels;</li>
+<li>pretest the survey with respondents similar to the target
+sample;</li>
+<li>reduce fatigue and avoid overly long questionnaires;</li>
+<li>include theoretically justified marker or response-style measures
+when needed; and</li>
+<li>report the design choices and the limitations of any statistical
+control.</li>
+</ul>
+<h1 id="application-to-my-research-projects">Application to my research
+projects</h1>
+<p>This article is especially relevant to survey-based research such as
+the Case 31 credit-union study and the social-media opinion-leader
+project. In both settings, respondents may provide predictor and outcome
+ratings in one questionnaire, using similar Likert scales. That design
+creates a possibility that correlations reflect shared response
+tendencies, question context, or social desirability in addition to the
+substantive constructs.</p>
+<p>For a future survey, I would separate conceptually related predictor
+and outcome sections, make the purpose and confidentiality protections
+clear, pretest item wording, and avoid double-barreled questions. If the
+research question allows it, I would combine self-report responses with
+behavioral or archival indicators. I would also avoid claiming that a
+single statistical test, such as a common-method-factor or
+marker-variable test, proves that method bias is absent. The most
+defensible approach is to reduce the threat during design and then use
+statistical sensitivity checks that match the suspected source of
+bias.</p>
+<h1 id="key-takeaways">Key takeaways</h1>
+<ol type="1">
+<li>Method bias is systematic measurement error, not merely random
+noise.</li>
+<li>Common method variance can affect both individual measures and
+relationships among constructs.</li>
+<li>Method effects may inflate or deflate relationships and may affect
+measures unequally.</li>
+<li>Procedural remedies should be planned before data collection
+whenever possible.</li>
+<li>Statistical remedies are useful but depend on assumptions about the
+source and structure of the bias.</li>
+<li>There is no single best remedy; the choice should fit the research
+question, constructs, and feasible data-collection design.</li>
+</ol>
+<h1 id="appendix-submission-links">Appendix: submission links</h1>
+<h2 id="github-pages">GitHub Pages</h2>
+<p><a href="https://min-woo0210.github.io/IBM6500-2-/M12-Article-Common-Method-Bias/">Open
+the published GitHub Pages website</a></p>
+<h2 id="github-repository">GitHub repository</h2>
+<p><a href="https://github.com/Min-woo0210/IBM6500-2-">Open the GitHub
+repository</a></p>
+<h2 id="article-source">Article source</h2>
+<p><a href="https://doi.org/10.1146/annurev-psych-120710-100452">Annual
+Review of Psychology article</a></p>
+<p><a href="https://pubmed.ncbi.nlm.nih.gov/21838546/">PubMed
+record</a></p>
+</body>
+</html>
